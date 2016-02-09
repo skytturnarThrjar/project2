@@ -1,0 +1,13 @@
+{
+  "name": "ChatProgram",
+  "description": "Chat program in Angular JS",
+  "main": "index.js",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-bootstrap": "^1.1.2",
+    "angular-animate": "^1.5.0"
+  }
+}
