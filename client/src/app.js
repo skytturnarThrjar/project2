@@ -5,5 +5,10 @@ angular.module("chatApp", ["ngRoute"])
 	$routeProvider.when("/login", {
 		templateUrl: "src/login/login.html",
 		controller: "LoginController"
-	}).otherwise({redirectTo: "/login" });
+	})
+	.when("/roomlist", {
+		templateUrl: "src/roomlist/Roomlist.html",
+		controller: "RoomlistController"
+	})
+	.otherwise({redirectTo: "/login" });
 }]);
