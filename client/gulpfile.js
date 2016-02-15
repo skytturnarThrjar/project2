@@ -3,6 +3,8 @@ var gulp = require('gulp'),
    concat = require('gulp-concat');
   //  jshint = require('gulp-jshint');
 
+  //  jshint = require('gulp-jshint');
+
   // define the default task and add the watch task to it
 gulp.task('default', ['watch']);
 
