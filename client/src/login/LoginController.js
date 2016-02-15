@@ -5,23 +5,39 @@ angular.module("chatApp").controller("LoginController", ["$scope", function ($sc
   //hægt að gera þetta svona en ekki mælt með því (eins og placeholder held ég?)
   /*$scope.login = "vala";
   $scope.pass = "flottlykilorð";*/
-  $scope.login = "";
-  $scope.pass = "";
+  $scope.username = "";
   $scope.errorMessage = "";
+  $scope.login = function(){
+    var socket = io.connect('http://localhost:8080');
 
-  $scope.onLogin = function onLogin () {
-    ChatResource.login($scope.user, $scope.pass, function(success) {
-      if(!success) {
-        //ef login mistekst
-        $scope.errorMessage = "Innskráning misstókst";
-      }
-      else {
-        //ef login tekst
-        //senda notanda á herbergi
-        //þetta sendir notanda á nýtt url (kannski þarf ekki #)
-        $location("#/roomlist");
-      }
-    });
-  };
+				socket.emit("adduser", "username", function(available){
+					$scope.available = available;
+					$scope.$apply();
+
+                  if (available){
+                      // The "dabs" username is not taken!
+                      $location("#/Roomlist");
+                      console.log("works");
+                  }
+				});
+			};
+
+  //
+  // $scope.Login = function Login () {
+  // //  var socket = io.connect('http://localhost:8080');
+  //     socket.emit("adduser", $scope.user, function(available){
+  //       $scope.available = available;
+  //       console.log("works");
+  //
+  //         if (available){
+  //             // The "dabs" username is not taken!
+  //             $location("#/roomlist");
+  //             console.log("works");
+  //         }
+  //         else {
+  //           $scope.errorMessage = "Innskráning misstókst";
+  //         }
+  //         });
+  // };
 
 }]);
