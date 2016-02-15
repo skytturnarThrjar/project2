@@ -1,7 +1,7 @@
 "use strict";
 
 //ng Annotate svo að það se hægt að minifya koðann
-angular.module("chatApp").controller("LoginController", function LoginController($scope, ChatResource) {
+angular.module("chatApp").controller("LoginController", ["$scope", function ($scope) {
   //hægt að gera þetta svona en ekki mælt með því (eins og placeholder held ég?)
   /*$scope.login = "vala";
   $scope.pass = "flottlykilorð";*/
@@ -23,4 +23,5 @@ angular.module("chatApp").controller("LoginController", function LoginController
       }
     });
   };
-});
+
+}]);

@@ -1,12 +1,9 @@
 "use strict";
 
-angular.module("chatApp", ["ui.bootstrap","ngRoute"])
-.config(function ($routeProvider) {
-	$routeProvider.when("/", {
+angular.module("chatApp", ["ngRoute"])
+.config(["$routeProvider",function ($routeProvider) {
+	$routeProvider.when("/login", {
 		templateUrl: "src/login/login.html",
 		controller: "LoginController"
-	}).when("/room", {
-		templateUrl: "src/roomlist/Roomlist.html",
-		controller: "RoomlistController"
-	});
-});
+	}).otherwise({redirectTo: "/login" });
+}]);
