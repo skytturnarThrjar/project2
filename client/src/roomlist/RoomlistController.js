@@ -4,8 +4,8 @@
     name: "spjall 1",
     id: 1
   }, {
-      name: "spjall 2",
-      id: 2
+    name: "spjall 2",
+    id: 2
   }
   ];
 }]);
