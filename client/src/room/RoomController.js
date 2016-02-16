@@ -25,11 +25,7 @@ socket.on('updatechat', function(room,chat) {
   $scope.roomName = room;
 });
 
-socket.on('userlist', function(users) {
-  // console.log(users);
-  $scope.activeUsers = users;
-});
-socket.emit("users");
+
 
 $scope.logout = function() {
   socket.emit('disconnect');
