@@ -4,7 +4,9 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "socket.io-client": "^0.9.16"
+    "socket.io-client": "^0.9.16",
+    "gulp-jshint": "~1.4.0",
+  "jshint-stylish": "~0.1.5"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

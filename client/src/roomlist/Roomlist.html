@@ -23,7 +23,7 @@
 <!--geta ýtt á user og gert kickout og nýtt chat og fl-->
 <ul>
   <li ng-repeat="item in activeUsers">
-    <div>{{item}}</div>
+    <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
   </li>
 </ul>
 </div>
