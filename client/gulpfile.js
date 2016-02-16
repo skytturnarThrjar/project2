@@ -12,8 +12,8 @@ gulp.task('connect', function() {
 gulp.task('default', ['watch', 'connect']);
 
 gulp.task('minify', function () {
-   gulp.src('src/**/*.js')
-      .pipe(uglify())
+   gulp.src(['node_modules/socket.io-client/dist/socket.io.js', 'src/**/*.js'])
+      //.pipe(uglify())
       .pipe(concat('app.min.js'))
       .pipe(gulp.dest('build'));
 });

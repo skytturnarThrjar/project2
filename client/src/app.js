@@ -1,7 +1,7 @@
 "use strict";
 
-angular.module("chatApp", ["ngRoute"])
-.config(["$routeProvider",function ($routeProvider) {
+var chatApp = angular.module("chatApp", ["ngRoute"]);
+chatApp.config(["$routeProvider",function ($routeProvider) {
 	$routeProvider.when("/login", {
 		templateUrl: "src/login/login.html",
 		controller: "LoginController"
