@@ -10,9 +10,9 @@ function ($scope, socket, $location, $rootScope, $routeParams) {
   $scope.username = "";
   $scope.errorMessage = "";
   $scope.login = function(){
-    socket.emit('adduser', 'vala', function (available) {
+    socket.emit('adduser', $scope.username, function (available) {
       if (available) {
-        //$location.path('/roomlist/');
+        $location.path('/roomlist/');
       } else {
         $scope.errorMessage = 'Nick is taken!';
       }
