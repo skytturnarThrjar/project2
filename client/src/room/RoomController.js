@@ -1,27 +1,11 @@
 angular.module('chatApp').controller('RoomController', ["$scope","socket","$routeParams","$location",
 function ($scope, socket, $routeParams,$location) {
 $scope.message = "";
-console.log($routeParams.user);
 $scope.roomName = $routeParams.roomID;
 $scope.currentUser = $routeParams.user;
-$scope.ops = [];
+$scope.currentOps = [];
 $scope.currentUsers = [];
-
-socket.on('updateusers', function(roomName, users, ops) {
-  if(roomName == $scope.roomName) {
-    $scope.ops = ops;
-    $scope.currentUsers = users;
-  }
-});
-
-$scope.checkIfOp = function(username) {
-  if(ops.indexOf(username) == -1) {
-    return false;
-  }
-  else {
-    return true;
-  }
-};
+$scope.kickMessage = '';
 
 socket.emit('joinroom', {'room': $scope.roomName}, function (available) {
   //baned passa edge case
@@ -43,43 +27,75 @@ $scope.logout = function() {
   $location.path('/login');
 };
 
-$scope.kickMessage = '';
-
 $scope.goBack = function(){
-  socket.emit('partroom', $routeParams.roomID);
+  socket.emit('partroom', $scope.roomName);
   $location.path('/roomlist/' + $scope.currentUser + '/');
 };
 
-$scope.kickOut = function(username, roomID) {
-  if(checkIfOp($scope.currentUser)) {
-    socket.emit('kick', {'user': username, 'room': roomID}, function (available) {
-      if (available) {
-        $scope.kickMessage = 'You kicked ' + username + ' out of the room';
-      }
-      else {
-        $scope.kickMessage = 'Failed kicking ' + username + ' out of the room';
-      }
-    });
+$scope.checkIfOp = function() {
+  for(var op in $scope.currentOps) {
+    if(op === $scope.currentUser && $scope.currentOps.hasOwnProperty(op)) {
+      return true;
+    }
   }
-  else {
-    $scope.kickMessage = 'You do not have the rights to kick ' + username + ' out of the room';
-  }
+  return false;
 };
 
-$scope.banUser = function(username, roomID) {
-  if(checkIfOp($scope.currentUser)) {
-    socket.emit('ban', {'user': username, 'room': roomID}, function (available) {
-      if (available) {
-        $scope.kickMessage = 'You banned ' + username + ' from the room';
-      }
-      else {
-        $scope.kickMessage = 'Failed banning ' + username + ' from the room';
-      }
-    });
-  }
-  else {
-    $scope.kickMessage = 'You do not have the rights to ban ' + username + ' from the room';
-  }
+$scope.makeOp = function(username) {
+  socket.emit('op', {'user': username, 'room': $scope.roomName}, function (available) {
+    if (available) {
+      $scope.kickMessage = 'You made ' + username + ' admin';
+    }
+    else {
+      $scope.kickMessage = 'Failed to made ' + username + ' admin';
+    }
+  });
 };
+
+$scope.kickOut = function(username) {
+  socket.emit('kick', {'user': username, 'room': $scope.roomName}, function (available) {
+    if (available) {
+      $scope.kickMessage = 'You kicked ' + username + ' out of the room';
+    }
+    else {
+      $scope.kickMessage = 'Failed kicking ' + username + ' out of the room';
+    }
+  });
+};
+
+socket.on('kicked', function(roomName, user, ops) {
+  if(roomName === $scope.roomName && user === $scope.currentUser) {
+    //ef þetta ert þú sem er verið að kicka út -> til baka
+    $location.path('/roomlist/' + $scope.currentUser + '/');
+  }
+});
+
+$scope.banUser = function(username) {
+  socket.emit('ban', {'user': username, 'room': $scope.roomName}, function (available) {
+    if (available) {
+      $scope.kickMessage = 'You banned ' + username + ' from the room';
+    }
+    else {
+      $scope.kickMessage = 'Failed banning ' + username + ' from the room';
+    }
+  });
+};
+
+socket.on('banned', function(roomName, user, ops) {
+  if(roomName === $scope.roomName && user === $scope.currentUser) {
+    //ef þetta ert þú sem er verið að banna -> til baka
+    $location.path('/roomlist/' + $scope.currentUser + '/');
+  }
+});
+
+socket.on('updateusers', function(roomName, users, ops) {
+  console.log(ops);
+  console.log(users);
+  if(roomName == $scope.roomName) {
+    //hann þurrkar þetta út ef creator fer útur grúppunni
+    $scope.currentOps = ops;
+    $scope.currentUsers = users;
+  }
+});
 
 }]);
