@@ -1,5 +1,5 @@
 // angular.module("chatApp").controller("RoomlistController", ["$scope".function($scope) {
-angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", function ($scope, socket, $location) {
+angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", "$routeParams", function ($scope, socket, $location, $routeParams) {
 
   socket.on("roomlist", function(rooms) {
     $scope.roomlist = rooms;
@@ -8,6 +8,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
 
   $scope.errorMessage = '';
   $scope.roomName = '';
+  $scope.currentUser = $routeParams.user;
 
   $scope.newRoom = function(){
     socket.emit('joinroom', {'room': $scope.roomName});
@@ -16,7 +17,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.moveToRoom = function(name){
     socket.emit('joinroom', {'room': name}, function (available) {
       if (available) {
-        $location.path('/room/' + name);
+        $location.path('/room/' + $scope.currentUser + '/' + name);
       }
       else {
         $scope.errorMessage = 'Cannot join room';
