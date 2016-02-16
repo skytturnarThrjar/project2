@@ -30,6 +30,18 @@
       </li>
     </ul>
 		</div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <h2>Active users in {{roomName}} </h2>
+          <!--geta ýtt á user og gert kickout og nýtt chat og fl-->
+          <ul>
+            <li ng-repeat="user in currentUsers">
+              <a href ng-click="">{{user}}</a>
+            </li>
+          </ul>
+    </div>
+    </div>
 	</div>
 
 
