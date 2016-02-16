@@ -1,11 +1,7 @@
 // angular.module("chatApp").controller("RoomlistController", ["$scope".function($scope) {
-  angular.module('chatApp').controller('RoomlistController', ["$scope", function ($scope) {
-  $scope.roomlist = [ {
-    name: "spjall 1",
-    id: 1
-  }, {
-    name: "spjall 2",
-    id: 2
-  }
-  ];
+angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", function ($scope, socket) {
+  socket.on("roomlist", function(rooms) {
+    $scope.roomlist = rooms;
+  });
+  socket.emit("rooms");
 }]);
