@@ -1,6 +1,12 @@
 <h2>Roomlist</h2>
 <ul>
   <li ng-repeat="(name, room) in roomlist">
-    <a ng-href="#/room/{{name}}">{{name}}</a>
+    <a href ng-click="moveToRoom(name)">{{name}}</a>
   </li>
 </ul>
+
+<div class="row">
+  <div class="col-xs-12">
+    {{errorMessage}}
+  </div>
+</div>
