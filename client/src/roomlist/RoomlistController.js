@@ -23,4 +23,10 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
       }
     });
   };
+
+  socket.on('userlist', function(users) {
+    // console.log(users);
+    $scope.activeUsers = users;
+  });
+  socket.emit("users");
 }]);

@@ -10,6 +10,9 @@ function ($scope, socket, $routeParams,$location) {
 $scope.message = "";
 $scope.roomName = $routeParams.roomID;
 
+socket.emit('joinroom', {'room': $scope.roomName}, function (available) {
+  //baned passa edge case
+});
 
 $scope.sendmsg = function() {
      socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
