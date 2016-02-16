@@ -24,12 +24,34 @@ socket.on('updatechat', function(room,chat) {
 
 socket.on('userlist', function(users) {
   // console.log(users);
-  $scope.roomlist = users;
+  $scope.activeUsers = users;
 });
 socket.emit("users");
 
 $scope.logout = function() {
   socket.emit('disconnect');
   $location.path('/login');
-}
+};
+
+$scope.kickMessage = '';
+
+$scope.goBack = function(){
+  socket.emit('partroom', $routeParams.roomID);
+  $location.path('/roomlist/');
+};
+
+$scope.kickOut = function(username, roomID) {
+  socket.emit('kick', {'user': username, 'room': roomID}, function (available) {
+    //BARA CREATOR LAGA ÞAÐ!
+    if (available) {
+      $scope.kickMessage = 'You kicked ' + username + ' out of the room';
+    }
+    else {
+      $scope.kickMessage = 'Failed kicking ' + username + ' out of the room';
+    }
+  });
+};
+
+
+
 }]);

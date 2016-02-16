@@ -36,12 +36,25 @@
 		<div class="col-xs-12">
       <h2>Activ users </h2>
 
+<!--geta ýtt á user og gert kickout og nýtt chat og fl-->
   <ul>
-    <li ng-repeat="item in roomlist">
+    <li ng-repeat="item in activeUsers">
       <div>{{item}}</div>
     </li>
   </ul>
 </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    {{kickMessage}}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <button ng-click="goBack()">Back</button>
+  </div>
 </div>
 
   <div class="col-xs-12">
