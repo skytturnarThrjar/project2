@@ -7,6 +7,11 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   socket.emit("rooms");
 
   $scope.errorMessage = '';
+  $scope.roomName = '';
+
+  $scope.newRoom = function(){
+    socket.emit('joinroom', {'room': $scope.roomName});
+  };
 
   $scope.moveToRoom = function(name){
     socket.emit('joinroom', {'room': name}, function (available) {

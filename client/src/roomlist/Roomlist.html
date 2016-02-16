@@ -1,5 +1,16 @@
 <h2>Roomlist</h2>
 <ul>
+  <li>
+    <label>Notendanafn:</label>
+    <input type="text" ng-model="roomName"/>
+    {{roomName}}
+  </li>
+  <li>
+    <button ng-click="newRoom()">New room</button>
+  </li>
+</ul>
+
+<ul>
   <li ng-repeat="(name, room) in roomlist">
     <a href ng-click="moveToRoom(name)">{{name}}</a>
   </li>
