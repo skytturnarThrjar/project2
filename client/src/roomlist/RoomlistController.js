@@ -4,7 +4,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   socket.on("roomlist", function(rooms) {
     $scope.roomlist = rooms;
   });
-  socket.emit("rooms");
+  socket.emit('rooms');
 
   $scope.errorMessage = '';
   $scope.roomName = '';
@@ -29,5 +29,24 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
     // console.log(users);
     $scope.activeUsers = users;
   });
-  socket.emit("users");
+  socket.emit('users');
+
+
+  $scope.moveToPrivateRoom = function(){
+        $location.path('/private/' + $scope.currentUser);
+  };
+//
+
+
+console.log($scope.currentUser);
+  socket.emit('privateRooms',$scope.currentUser);
+      //  console.log("her!");
+
+  socket.on('privateRoomList',function(list) {
+    $scope.privateRoomList = list;
+    console.log($scope.privateRoomList);
+  });
+
+
+
 }]);

@@ -29,8 +29,17 @@
 </div>
 </div>
 
+<a href ng-click="moveToPrivateRoom()">TEST</a>
+
 <div class="row">
   <div class="col-xs-12">
     {{errorMessage}}
   </div>
 </div>
+
+
+<ul>
+  <li ng-repeat="item in privateRoomList">
+    <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
+  </li>
+</ul>

@@ -5,6 +5,7 @@ function ($scope, socket, $location, $rootScope, $routeParams) {
   //hægt að gera þetta svona en ekki mælt með því (eins og placeholder held ég?)
   /*$scope.login = "vala";
   $scope.pass = "flottlykilorð";*/
+
   $scope.username = "";
   $scope.errorMessage = "";
   $scope.login = function(){

@@ -1,0 +1,32 @@
+body
+{
+  /*background-color: rgba(255, 255, 255, 0.84);*/
+  font-family:"Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.88);
+  color:rgb(44, 185, 223);
+}
+
+ul
+{
+  list-style-type: none;
+}
+
+.login{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  width: 100px;
+  height: 100px;
+}​
+
+input.ng-pristine.ng-untouched.ng-valid.ng-empty{
+  border: none;
+  padding: 0 10px;
+  margin: 0;
+  width: 240px;
+  background: none;
+}

@@ -1,6 +1,6 @@
-var express = require('express'), 
-app = express(), 
-http = require('http'), 
+var express = require('express'),
+app = express(),
+http = require('http'),
 server = http.createServer(app),
 io = require('socket.io').listen(server);
 
@@ -10,6 +10,9 @@ server.listen(8080);
 var rooms = {};
 //Global user object, since we want to know what rooms each user is in etc.
 var users = {};
+
+var privateChatts = {};
+
 
 //Default room.
 rooms.lobby = new Room();
@@ -25,7 +28,7 @@ io.sockets.on('connection', function (socket) {
 			socket.username = username;
 
 			//Store user object in global user roster.
-			users[username] = { username: socket.username, channels: {}, socket: this };
+			users[username] = new User(socket.username);
 			fn(true); // Callback, user name was available
 		}
 		else {
@@ -101,7 +104,7 @@ io.sockets.on('connection', function (socket) {
 
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendmsg', function (data) {
-		
+
 		var userAllowed = false;
 
 		//Check if user is allowed to send message.
@@ -125,15 +128,70 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('privatemsg', function (msgObj, fn) {
-
 		//If user exists in global user list.
 		if(users[msgObj.nick] !== undefined) {
+
+			var messageObj = {
+				nick : socket.username,
+				timestamp :  new Date(),
+				message : msgObj.message.substring(0, 200),
+				currentUser: msgObj.currentUser
+			};
+
+			var roomName = messageObj.currentUser + messageObj.nick;
+			var roomName2 = messageObj.nick + messageObj.currentUser +;
+
+			console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
+			if(users[messageObj.currentUser].privaterooms[roomName] === undefined && users[messageObj.currentUser].privaterooms[roomName2] === undefined ) {
+
+
+
+
+
+					socket.emit('joinroom', {'room': roomName});
+
+					users[messageObj.currentUser].privaterooms[roomName] = new PriveateRoom();
+					users[messageObj.nick].privaterooms[roomName] = new PriveateRoom();
+
+
+					users[messageObj.currentUser].privaterooms[roomName].addPrivateMessage(messageObj);
+					users[messageObj.nick].privaterooms[roomName].addPrivateMessage(messageObj);
+
+					io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[roomName].privateMessageHistory); // MEESSSAGEEE
+					io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[roomName].privateMessageHistory); // MEESSSAGEEE
+
+			}
+			else if(users[messageObj.current].privaterooms[roomName] !== undefined) {
+					users[messageObj.current].privaterooms[messageObj.nick].addPrivateMessage(messageObj);
+					users[messageObj.nick].privaterooms[messageObj.nick].addPrivateMessage(messageObj);
+					io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
+					io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
+
+			}
+			else if(users[messageObj.current].privaterooms[messageObj.current] !== undefined) {
+				users[messageObj.current].privaterooms[messageObj.current].addPrivateMessage(messageObj);
+				users[messageObj.nick].privaterooms[messageObj.current].addPrivateMessage(messageObj);
+				io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
+				io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
+
+			}
+
 			//Send the message only to this user.
-			users[msgObj.nick].socket.emit('recv_privatemsg', socket.username, msgObj.message);
+			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
+
 			//Callback recieves true.
 			fn(true);
 		}
 		fn(false);
+	});
+
+	socket.on('privateRooms', function(current ) {
+		var privateRom = [];
+		console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ current);
+		for(var rooms in users[current].privaterooms) {
+			privateRom.push(rooms);
+		}
+		socket.emit('privateRoomList', privateRom);
 	});
 
 	//When a user leaves a room this gets performed.
@@ -301,6 +359,34 @@ io.sockets.on('connection', function (socket) {
 		fn(false);
 	});
 });
+
+
+function User(username) {
+	this.username = username;
+	this.channels =  {};
+	this.socket = this;
+	this.privateMessageHistory = [],
+	this.privaterooms = {},
+	this.addPrivateMessage = function(message) {
+		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
+	};
+
+}
+
+function PriveateRoom() {
+	this.users = {},
+	this.ops = {},
+	this.banned = {},
+	this.privateMessageHistory = [],
+	this.topic = "No topic has been set for room..",
+	this.locked = false,
+	this.password = "",
+
+	this.addPrivateMessage = function(message) {
+		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
+	};
+
+}
 
 //Define the Room class/object.
 function Room() {
