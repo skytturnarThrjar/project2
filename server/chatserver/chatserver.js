@@ -132,7 +132,7 @@ io.sockets.on('connection', function (socket) {
 		if(users[msgObj.nick] !== undefined) {
 
 			var messageObj = {
-				nick : socket.username,
+				nick : msgObj.nick,
 				timestamp :  new Date(),
 				message : msgObj.message.substring(0, 200),
 				currentUser: msgObj.currentUser

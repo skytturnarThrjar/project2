@@ -3,12 +3,12 @@ function ($scope, socket, $routeParams, $location) {
 
 $scope.message = "";
 $scope.currentUser = $routeParams.user;
-$scope.privatChatFriend = $routeParams.ChatFriend ;
-
+$scope.privatChatFriend = $routeParams.ChatFriend;
+console.log($scope.privatChatFriend);
 
 
   $scope.privatemsg = function() {
-       socket.emit('privatemsg',{currentUser:$scope.currentUser , nick:"Elin", message:$scope.message} , function (available) {
+       socket.emit('privatemsg',{currentUser:$scope.currentUser , nick:$scope.privatChatFriend, message:$scope.message} , function (available) {
          if (available) {
           }
           else {
