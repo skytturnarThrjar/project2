@@ -123,4 +123,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
       $scope.currentUsers = users;
     }
   });
+
+  $scope.clearfunction = function(event){
+    event.message = null;
+  };
 }]);
