@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     connect = require('gulp-connect'),
+    annotate = require('gulp-ng-annotate'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     jshint = require('gulp-jshint');
@@ -13,9 +14,10 @@ gulp.task('default', ['watch', 'connect', 'minify','lint']);
 
 gulp.task('minify', function () {
    gulp.src(['node_modules/socket.io-client/dist/socket.io.js', 'src/**/*.js'])
-      //.pipe(uglify())
-      .pipe(concat('app.min.js'))
-      .pipe(gulp.dest('build'));
+    .pipe(annotate())
+    .pipe(uglify())
+    .pipe(concat('app.min.js'))
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('lint', function() {
