@@ -9,12 +9,7 @@
 			<input type="text" ng-model="message"/>
 			{{message}}
 
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12">
-			<button ng-click="sendmsg()">Send</button>
+			<button ng-click="sendmsg(); clearfunction(this)">Send</button>
 		</div>
 	</div>
 
