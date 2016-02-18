@@ -1,6 +1,6 @@
-var express = require('express'), 
-app = express(), 
-http = require('http'), 
+var express = require('express'),
+app = express(),
+http = require('http'),
 server = http.createServer(app),
 io = require('socket.io').listen(server);
 
@@ -86,7 +86,11 @@ io.sockets.on('connection', function (socket) {
 			//We need to let the server know beforehand so that he starts to prepare the client template.
 			fn(true);
 			//Add user to room.
-			rooms[room].addUser(socket.username);
+			//sleppa þessu þegar ops
+			if(rooms[room].ops[socket.username] !== socket.username) {
+				console.log("BLABLA");
+				rooms[room].addUser(socket.username);
+			}
 			//Keep track of the room in the user object.
 			users[socket.username].channels[room] = room;
 			//Send the room information to the client.
@@ -101,7 +105,7 @@ io.sockets.on('connection', function (socket) {
 
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendmsg', function (data) {
-		
+
 		var userAllowed = false;
 
 		//Check if user is allowed to send message.
@@ -140,7 +144,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('partroom', function (room) {
 		//remove the user from the room roster and room op roster.
 		delete rooms[room].users[socket.username];
-		delete rooms[room].ops[socket.username];
+		//delete rooms[room].ops[socket.username]; COMMENTAÐI ÞETTA ÚT TIL AÐ LÁTA CREATOR EKKI HÆTTA AÐ VERA CREATOR ÞEGAR HANN FER ÚT
 		//Remove the channel from the user object in the global user roster.
 		delete users[socket.username].channels[room];
 		//Update the userlist in the room.
