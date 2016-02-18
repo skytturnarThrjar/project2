@@ -3,6 +3,8 @@ function ($scope, socket, $routeParams, $location) {
 
 $scope.message = "";
 $scope.currentUser = $routeParams.user;
+$scope.privatChatFriend = $routeParams.ChatFriend ;
+
 
 
   $scope.privatemsg = function() {
@@ -10,17 +12,18 @@ $scope.currentUser = $routeParams.user;
          if (available) {
           }
           else {
-           $scope.errorMessage = "fila";
+           $scope.errorMessage = "obbosí";
          }
        });
 
-      //  $scope.currentUser.socket.emit('recv_privatemsg');
       socket.on('recv_privatemsg', function(current ,message) {
         $scope.currentUser = current;
         $scope.messageHistory = message;
         console.log(message);
         console.log(current);
       });
+      socket.emit('recv_privatemsg');
+
 
   };
 

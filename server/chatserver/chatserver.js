@@ -11,7 +11,7 @@ var rooms = {};
 //Global user object, since we want to know what rooms each user is in etc.
 var users = {};
 
-var privateChatts = {};
+var privateChats = {};
 
 
 //Default room.
@@ -138,43 +138,30 @@ io.sockets.on('connection', function (socket) {
 				currentUser: msgObj.currentUser
 			};
 
-			var roomName = messageObj.currentUser + messageObj.nick;
-			var roomName2 = messageObj.nick + messageObj.currentUser +;
+			var roomName = messageObj.currentUser + " and " + messageObj.nick;
+			var roomName2 = messageObj.nick + " and "  + messageObj.currentUser ;
 
-			console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
-			if(users[messageObj.currentUser].privaterooms[roomName] === undefined && users[messageObj.currentUser].privaterooms[roomName2] === undefined ) {
+			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
+ 					var room = roomName;
 
+					//If the room does not exist
+					if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
+						console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ room + " " + roomName2);
 
+						privateChats[room] = new PriveateRoom();
+						//Op the user if he creates the room.
 
+						//Keep track of the room in the user object.
+						users[messageObj.currentUser].privaterooms[room] = room;
+						users[messageObj.nick].privaterooms[room] = room;
+						}
+						io.sockets.emit('roomlist',privateChats);// This line was added
+						console.log('rooms updated',privateChats);// This line was added
 
+						privateChats[room].addPrivateMessage(messageObj);
 
-					socket.emit('joinroom', {'room': roomName});
-
-					users[messageObj.currentUser].privaterooms[roomName] = new PriveateRoom();
-					users[messageObj.nick].privaterooms[roomName] = new PriveateRoom();
-
-
-					users[messageObj.currentUser].privaterooms[roomName].addPrivateMessage(messageObj);
-					users[messageObj.nick].privaterooms[roomName].addPrivateMessage(messageObj);
-
-					io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[roomName].privateMessageHistory); // MEESSSAGEEE
-					io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[roomName].privateMessageHistory); // MEESSSAGEEE
-
-			}
-			else if(users[messageObj.current].privaterooms[roomName] !== undefined) {
-					users[messageObj.current].privaterooms[messageObj.nick].addPrivateMessage(messageObj);
-					users[messageObj.nick].privaterooms[messageObj.nick].addPrivateMessage(messageObj);
-					io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
-					io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
-
-			}
-			else if(users[messageObj.current].privaterooms[messageObj.current] !== undefined) {
-				users[messageObj.current].privaterooms[messageObj.current].addPrivateMessage(messageObj);
-				users[messageObj.nick].privaterooms[messageObj.current].addPrivateMessage(messageObj);
-				io.sockets.emit('recv_privatemsg', messageObj.currentUser, users[messageObj.currentUser].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
-				io.sockets.emit('recv_privatemsg', messageObj.nick, users[messageObj.nick].privaterooms[messageObj.nick].privateMessageHistory); // MEESSSAGEEE
-
-			}
+					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+					io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
 
 			//Send the message only to this user.
 			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
@@ -185,12 +172,12 @@ io.sockets.on('connection', function (socket) {
 		fn(false);
 	});
 
-	socket.on('privateRooms', function(current ) {
+	socket.on('privateRoom', function(current ) {
 		var privateRom = [];
 		console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ current);
-		for(var rooms in users[current].privaterooms) {
-			privateRom.push(rooms);
-		}
+		 for(var rooms in users[current].privaterooms) {
+		 	privateRom.push(rooms);
+		 }
 		socket.emit('privateRoomList', privateRom);
 	});
 
