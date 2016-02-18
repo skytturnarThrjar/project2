@@ -14,4 +14,16 @@ function ($scope, socket, $location, $rootScope, $routeParams) {
       }
     });
   };
+
+  // BUTTONS ======================
+
+// define some random object and button values
+$scope.bigData = {};
+
+$scope.bigData.breakfast = false;
+$scope.bigData.lunch = false;
+$scope.bigData.dinner = false;
+
+// COLLAPSE =====================
+
 }]);

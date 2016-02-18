@@ -1,32 +1,29 @@
-<h2>Roomlist</h2>
-<ul>
-  <li>
+<div class="col-xs-12 form-group col-lg-2">
     <label>Nýtt herbergi:</label>
     <input type="text" ng-model="roomName"/>
-    {{roomName}}
-  </li>
-  <li>
-    <button ng-click="newRoom(); clearfunction(this)">Create room</button>
-  </li>
-</ul>
+    <button class="btn btn-primary" ng-click="newRoom(); clearfunction(this)">Create room</button>
+</div>
 
-<ul>
-  <li ng-repeat="(name, room) in roomlist">
-    <a href ng-click="moveToRoom(name)">{{name}}</a>
-  </li>
-</ul>
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Active Rooms</h2>
+    <ul class="list-group col-lg-3">
+      <li class="list-group-item" ng-repeat="(name, room) in roomlist">
+        <a href ng-click="moveToRoom(name)">{{name}}</a>
+      </li>
+    </ul>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-xs-12">
     <h2>Active users </h2>
-
-<!--geta ýtt á user og gert kickout og nýtt chat og fl-->
-<ul>
-  <li ng-repeat="item in activeUsers">
-    <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
-  </li>
-</ul>
-</div>
+      <ul class="list-group col-lg-3">
+        <li class="list-group-item" ng-repeat="item in activeUsers">
+          <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
+        </li>
+      </ul>
+  </div>
 </div>
 
 <div class="row">

@@ -1,14 +1,11 @@
 
 <div>
-
   <h2>{{roomName}}</h2>
-
 	<div class="row">
 		<div class="col-xs-12">
 			<label>Message:</label>
 			<input type="text" ng-model="message"/>
 			{{message}}
-
 		</div>
 	</div>
 
@@ -49,9 +46,9 @@
     </div>
 	</div>
 
-<div class="row">
+<div class="row" ng-show="showMessage">
   <div class="col-xs-12">
-    {{kickMessage}}
+    {{infoMessage}}
   </div>
 </div>
 

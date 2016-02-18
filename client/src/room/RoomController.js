@@ -1,23 +1,46 @@
-angular.module('chatApp').controller('RoomController', ["$scope", "socket", "$routeParams", "$location",
-function ($scope, socket, $routeParams, $location) {
-  $scope.message = "";
+angular.module('chatApp').controller('RoomController', ["$scope", "socket", "$routeParams", "$location", "$timeout",
+function ($scope, socket, $routeParams, $location, $timeout) {
+  $scope.message = '';
   $scope.roomName = $routeParams.roomID;
   $scope.currentUser = $routeParams.user;
   $scope.currentOps = [];
   $scope.currentUsers = [];
-  $scope.kickMessage = '';
+  $scope.bannedUsers = [];
+  $scope.infoMessage = '';
+  $scope.showMessage = false;
+  $scope.messageTimer = false;
 
   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {
-    //baned passa edge case
+    //if currentUser er banned frá þessu herbergi þá má hann ekki
   });
+
+  $scope.messageOnTime = function() {
+    if ($scope.messageTimer) {
+      $timeout.cancel($scope.messageTimer);
+    }
+    $scope.showMessage = true;
+
+    $scope.messageTimer = $timeout(function () {
+        $scope.showMessage = false;
+    }, 2000);
+  };
 
   $scope.sendmsg = function() {
        socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
-      //  console.log("her!");
   };
 
+  socket.on('servermessage', function(mess, room, username) {
+    if(mess == 'join') {
+      $scope.infoMessage = username + ' just joined the room';
+      $scope.messageOnTime();
+    }
+    if(mess == 'part') {
+      $scope.infoMessage = username + ' just left the room';
+      $scope.messageOnTime();
+    }
+  });
+
   socket.on('updatechat', function(room,chat) {
-    // console.log('Chat', chat);
     $scope.messageHistory = chat;
     $scope.roomName = room;
   });
@@ -44,10 +67,12 @@ function ($scope, socket, $routeParams, $location) {
   $scope.makeOp = function(username) {
     socket.emit('op', {'user': username, 'room': $scope.roomName}, function (available) {
       if (available) {
-        $scope.kickMessage = 'You made ' + username + ' admin';
+        $scope.infoMessage = 'You made ' + username + ' admin';
+        $scope.messageOnTime();
       }
       else {
-        $scope.kickMessage = 'Failed to made ' + username + ' admin';
+        $scope.infoMessage = 'Failed to made ' + username + ' admin';
+        $scope.messageOnTime();
       }
     });
   };
@@ -55,10 +80,12 @@ function ($scope, socket, $routeParams, $location) {
   $scope.kickOut = function(username) {
     socket.emit('kick', {'user': username, 'room': $scope.roomName}, function (available) {
       if (available) {
-        $scope.kickMessage = 'You kicked ' + username + ' out of the room';
+        $scope.infoMessage = 'You kicked ' + username + ' out of the room';
+        $scope.messageOnTime();
       }
       else {
-        $scope.kickMessage = 'Failed kicking ' + username + ' out of the room';
+        $scope.infoMessage = 'Failed kicking ' + username + ' out of the room';
+        $scope.messageOnTime();
       }
     });
   };
@@ -73,10 +100,12 @@ function ($scope, socket, $routeParams, $location) {
   $scope.banUser = function(username) {
     socket.emit('ban', {'user': username, 'room': $scope.roomName}, function (available) {
       if (available) {
-        $scope.kickMessage = 'You banned ' + username + ' from the room';
+        $scope.infoMessage = 'You banned ' + username + ' from the room';
+        $scope.messageOnTime();
       }
       else {
-        $scope.kickMessage = 'Failed banning ' + username + ' from the room';
+        $scope.infoMessage = 'Failed banning ' + username + ' from the room';
+        $scope.messageOnTime();
       }
     });
   };
@@ -89,10 +118,7 @@ function ($scope, socket, $routeParams, $location) {
   });
 
   socket.on('updateusers', function(roomName, users, ops) {
-    console.log(ops);
-    console.log(users);
     if(roomName == $scope.roomName) {
-      //hann þurrkar þetta út ef creator fer útur grúppunni
       $scope.currentOps = ops;
       $scope.currentUsers = users;
     }
