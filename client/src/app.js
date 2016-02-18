@@ -14,3 +14,13 @@ chatApp.config(["$routeProvider",function ($routeProvider) {
 	})
 	.otherwise({redirectTo: "/login" });
 }]);
+
+chatApp.run(function($rootScope, $location) {
+  $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+		if ($rootScope.loggedUser === undefined) {
+      if (next.templateUrl !== 'src/login/login.html') {
+				$location.path('/login');
+			}
+		}
+  });
+});

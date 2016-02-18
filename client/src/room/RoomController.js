@@ -1,5 +1,5 @@
-angular.module('chatApp').controller('RoomController', ["$scope","socket","$routeParams","$location",
-function ($scope, socket, $routeParams,$location) {
+angular.module('chatApp').controller('RoomController', ["$scope", "socket", "$routeParams", "$location",
+function ($scope, socket, $routeParams, $location) {
 $scope.message = "";
 $scope.roomName = $routeParams.roomID;
 $scope.currentUser = $routeParams.user;
@@ -23,7 +23,7 @@ socket.on('updatechat', function(room,chat) {
 });
 
 $scope.logout = function() {
-  socket.emit('disconnect');
+  socket.emit('disconnectPlease');
   $location.path('/login');
 };
 

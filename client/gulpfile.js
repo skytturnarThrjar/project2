@@ -22,11 +22,10 @@ gulp.task('lint', function() {
     gulp.src('src/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))
-        .pipe(jshint.reporter('fail'))
+        .pipe(jshint.reporter('fail'));
 });
 
 gulp.task('watch', function() {
   gulp.watch('src/**/*.js', ['minify']);
-
   gulp.watch('src/**/*.js', ['lint']);
 });

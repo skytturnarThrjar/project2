@@ -23,7 +23,7 @@ io.sockets.on('connection', function (socket) {
 		//Check if username is avaliable.
 		if (users[username] === undefined && username.toLowerCase != "server" && username.length < 21) {
 			socket.username = username;
-
+			console.log("SOCKET USERNAME 1: " + socket.username);
 			//Store user object in global user roster.
 			users[username] = { username: socket.username, channels: {}, socket: this };
 			fn(true); // Callback, user name was available
@@ -88,7 +88,6 @@ io.sockets.on('connection', function (socket) {
 			//Add user to room.
 			//sleppa þessu þegar ops
 			if(rooms[room].ops[socket.username] !== socket.username) {
-				console.log("BLABLA");
 				rooms[room].addUser(socket.username);
 			}
 			//Keep track of the room in the user object.
@@ -153,7 +152,7 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	// when the user disconnects.. perform this
-	socket.on('disconnect', function(){
+	socket.on('disconnectPlease', function(){
 		if(socket.username) {
 			//If the socket doesn't have a username the client joined and parted without
 			//chosing a username, so we just close the socket without any cleanup.

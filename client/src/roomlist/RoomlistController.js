@@ -10,6 +10,11 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.roomName = '';
   $scope.currentUser = $routeParams.user;
 
+  $scope.logout = function() {
+    socket.emit('disconnectPlease');
+    $location.path('/login');
+  };
+
   $scope.newRoom = function(){
     socket.emit('joinroom', {'room': $scope.roomName});
   };
@@ -30,4 +35,8 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
     $scope.activeUsers = users;
   });
   socket.emit("users");
+
+  $scope.clearfunction = function(event){
+    event.roomName = null;
+  };
 }]);
