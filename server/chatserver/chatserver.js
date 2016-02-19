@@ -36,6 +36,35 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('roomExists', function(nameObj) {
+
+	  var roomName =  nameObj.curr + "-" + nameObj.other;
+	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+	  var room;
+
+
+		if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
+
+			privateChats[roomName] = new PriveateRoom();
+			//Op the user if he creates the room.
+
+			//Keep track of the room in the user object.
+			users[nameObj.curr].privaterooms[roomName] = room;
+			users[nameObj.other].privaterooms[roomName] = room;
+		}
+
+	  //If the room does not exist
+	  if(privateChats[roomName2] !== undefined) {
+	    room = roomName2;
+	  } else if(privateChats[roomName] !== undefined) {
+	    room = roomName;
+	  }
+	  else {
+	    room = "nothing";
+	  }
+	  io.sockets.emit('getRoom', room);
+	});
+
 	//When a user joins a room this processes the request.
 	socket.on('joinroom', function (joinObj, fn) {
 
@@ -143,14 +172,13 @@ io.sockets.on('connection', function (socket) {
 			console.log( "HHHHHHHHHHH roomName"  + messageObj.currentUser + "-" + messageObj.nick);
 			console.log( "HHHHHHHHHHH roomName2"  + messageObj.nick + "-"  + messageObj.currentUser);
 
-			var room = messageObj.currentUser + "-" + messageObj.nick;
+		 var room = messageObj.currentUser + "-" + messageObj.nick;
 			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
 
 			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
 
 					//If the room does not exist
 					if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
-						console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ room + " " + roomName2);
 
 						privateChats[room] = new PriveateRoom();
 						//Op the user if he creates the room.
@@ -169,8 +197,7 @@ io.sockets.on('connection', function (socket) {
 
 						io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
 						io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
-console.log(room);
-console.log(privateChats[room]);
+
 						privateChats[room].addPrivateMessage(messageObj);
 
 					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
