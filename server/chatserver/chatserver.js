@@ -22,10 +22,14 @@ io.sockets.on('connection', function (socket) {
 		//Check if username is avaliable.
 		if (users[username] === undefined && username.toLowerCase != "server" && username.length < 21) {
 			socket.username = username;
-
 			//Store user object in global user roster.
-			users[username] = { username: socket.username, channels: {}, socket: this };
+			users[username] = { username: socket.username, channels: {}, socket: this};
 			fn(true); // Callback, user name was available
+			var userlist = [];
+			for(var user in users) {
+				userlist.push(user);
+			}
+			io.sockets.emit('userlist', userlist);
 		}
 		else {
 			fn(false); // Callback, it wasn't available
@@ -41,6 +45,7 @@ io.sockets.on('connection', function (socket) {
 		var reason;
 
 		//If the room does not exist
+		console.log("ROOM: ");
 		if(rooms[room] === undefined) {
 			rooms[room] = new Room();
 			//Op the user if he creates the room.
@@ -86,10 +91,11 @@ io.sockets.on('connection', function (socket) {
 			fn(true);
 			//Add user to room.
 			//sleppa þessu þegar ops
-			if(rooms[room].ops[socket.username] !== socket.username) {
+			//HALLO HER!!!
+			//if(rooms[room].ops[socket.username] !== socket.username) {
 
 				rooms[room].addUser(socket.username);
-			}
+			//}
 			//Keep track of the room in the user object.
 			users[socket.username].channels[room] = room;
 			//Send the room information to the client.
@@ -195,7 +201,7 @@ io.sockets.on('connection', function (socket) {
 		console.log(socket.username + " opped " + opObj.user + " from " + opObj.room);
 		if(rooms[opObj.room].ops[socket.username] !== undefined) {
 			//Remove the user from the room roster.
-			delete rooms[opObj.room].users[opObj.user];
+			//delete rooms[opObj.room].users[opObj.user]; EKKI HAFA ÞETTA ??? VALA
 			//Op the user.
 			rooms[opObj.room].ops[opObj.user] = opObj.user;
 			//Broadcast to the room who got opped.

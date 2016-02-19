@@ -1,0 +1,16 @@
+body {
+  padding: 20px;
+}
+
+.chatNick {
+  float: right;
+  font-weight: bold;
+}
+
+.chatTimestamp {
+  float: right;
+}
+
+.opsButtons {
+  float: right;
+}

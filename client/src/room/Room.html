@@ -2,44 +2,48 @@
 <div>
   <h2>{{roomName}}</h2>
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="col-xs-12 form-group col-lg-3">
 			<label>Message:</label>
-			<input type="text" ng-model="message"/>
-			{{message}}
+			<input type="text" class="form-control" ng-model="message"/>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12">
-			<button ng-click="sendmsg(); clearfunction(this)">Send</button>
+			<button class="btn btn-primary" ng-click="sendmsg(); clearfunction(this)">Send</button>
 		</div>
 	</div>
 
   <div class="row">
 		<div class="col-xs-12">
-      <ul>
-      <li ng-repeat="message in messageHistory">
+      <ul class="list-group col-lg-5">
+      <li class="list-group-item" ng-repeat="message in messageHistory">
         <!-- <div> Nick : {{nick}}  Message: {{message}}  Timestamp: {{timestamp}}</div> -->
-        <div> {{message.nick}}</div>
+        <div class="chatNick"> {{message.nick}}</div>
+        <div class="chatTimestamp"> {{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</div>
         <div> {{message.message}}</div>
-        <div> {{message.timestamp}}</div>
-
       </li>
     </ul>
 		</div>
+  </div>
 
     <div class="row">
       <div class="col-xs-12">
         <h2>Active users in {{roomName}} </h2>
           <!--geta ýtt á user og gert kickout og nýtt chat og fl-->
-          <ul>
+          <ul class="list-group col-lg-4">
             <!--þarf ops her?-->
-            <li ng-repeat="(name, user) in currentOps"> {{user}}
+            <!--<li class="list-group-item" ng-repeat="(name, user) in currentOps"> {{user}}
+            </li>-->
+            <li class="list-group-item">
+              {{currentUser}}
             </li>
-            <li ng-repeat="(name, user) in currentUsers"> {{user}}
-              <button type="button" ng-if="checkIfOp()" ng-click="kickOut(user)">Kick out</button>
-              <button type="button" ng-if="checkIfOp()" ng-click="banUser(user)">Ban user</button>
-              <button type="button" ng-if="checkIfOp()" ng-click="makeOp(user)">Make admin</button>
+            <li class="list-group-item" ng-repeat="(name, user) in currentUsers" ng-if="user !== currentUser"> {{user}}
+              <div class="opsButtons">
+              <button type="button" class="btn btn-primary" ng-if="checkIfOp()" ng-click="kickOut(user)">Kick out</button>
+              <button type="button" class="btn btn-primary" ng-if="checkIfOp()" ng-click="banUser(user)">Ban user</button>
+              <button type="button" class="btn btn-primary" ng-if="checkIfOp()" ng-click="makeOp(user)">Make admin</button>
+              </div>
             </li>
           </ul>
     </div>
@@ -54,11 +58,11 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <button ng-click="goBack()">Back</button>
+    <button class="btn btn-primary" ng-click="goBack()">Back</button>
   </div>
 </div>
-
+<div class="row">
   <div class="col-xs-12">
-    <button ng-click="logout()">Logout</button>
+    <button class="btn btn-primary" ng-click="logout()">Logout</button>
   </div>
 </div>

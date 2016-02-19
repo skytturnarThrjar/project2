@@ -1,4 +1,4 @@
-angular.module('chatApp').controller('RoomController', ["$scope", "socket", "$routeParams", "$location", "$timeout",
+angular.module('chatApp').controller('RoomController', ['$scope', 'socket', '$routeParams', '$location', '$timeout',
 function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.message = '';
   $scope.roomName = $routeParams.roomID;
@@ -10,24 +10,13 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.showMessage = false;
   $scope.messageTimer = false;
 
+  //SKÍTMIX HEHEHE KLÁRA ÞETTA
+  
   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {
     //if currentUser er banned frá þessu herbergi þá má hann ekki
   });
 
-  $scope.messageOnTime = function() {
-    if ($scope.messageTimer) {
-      $timeout.cancel($scope.messageTimer);
-    }
-    $scope.showMessage = true;
-
-    $scope.messageTimer = $timeout(function () {
-        $scope.showMessage = false;
-    }, 2000);
-  };
-
-  $scope.sendmsg = function() {
-       socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
-  };
+  //CHECK UP ON THE SERVER MESSAGE
 
   socket.on('servermessage', function(mess, room, username) {
     if(mess == 'join') {
@@ -40,20 +29,48 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
   });
 
+  //UPDATE CHAT
+
   socket.on('updatechat', function(room,chat) {
-    $scope.messageHistory = chat;
-    $scope.roomName = room;
+    if($scope.roomName == room) {
+      $scope.messageHistory = chat;
+      $scope.roomName = room;
+    }
   });
+
+  //TIMER ON MESSAGES
+
+  $scope.messageOnTime = function() {
+    if ($scope.messageTimer) {
+      $timeout.cancel($scope.messageTimer);
+    }
+    $scope.showMessage = true;
+    $scope.messageTimer = $timeout(function () {
+        $scope.showMessage = false;
+    }, 2000);
+  };
+
+  //SEND MESSAGE
+
+  $scope.sendmsg = function() {
+       socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
+  };
+
+  //BACK BUTTON
+
+  $scope.goBack = function(){
+    socket.emit('partroom', $scope.roomName);
+    $location.path('/roomlist/' + $scope.currentUser + '/');
+  };
+
+  //LOG OUT BUTTON
 
   $scope.logout = function() {
     socket.emit('disconnectPlease');
     $location.path('/login');
   };
 
-  $scope.goBack = function(){
-    socket.emit('partroom', $scope.roomName);
-    $location.path('/roomlist/' + $scope.currentUser + '/');
-  };
+  //CHECK IF USER IS AN OP
 
   $scope.checkIfOp = function() {
     for(var op in $scope.currentOps) {
@@ -63,6 +80,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
     return false;
   };
+
+  // MAKE ANOTHER USER AN OP
 
   $scope.makeOp = function(username) {
     socket.emit('op', {'user': username, 'room': $scope.roomName}, function (available) {
@@ -76,6 +95,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
       }
     });
   };
+
+  // KICKOUT
 
   $scope.kickOut = function(username) {
     socket.emit('kick', {'user': username, 'room': $scope.roomName}, function (available) {
@@ -97,6 +118,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
   });
 
+  //BAN USER
+
   $scope.banUser = function(username) {
     socket.emit('ban', {'user': username, 'room': $scope.roomName}, function (available) {
       if (available) {
@@ -117,12 +140,16 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
   });
 
+  //UPDATE CURRENT USERS
+
   socket.on('updateusers', function(roomName, users, ops) {
     if(roomName == $scope.roomName) {
       $scope.currentOps = ops;
       $scope.currentUsers = users;
     }
   });
+
+  //CLEAR INPUT FIELD
 
   $scope.clearfunction = function(event){
     event.message = null;
