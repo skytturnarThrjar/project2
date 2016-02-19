@@ -185,6 +185,26 @@ console.log(privateChats[room]);
 		fn(false);
 	});
 
+
+	//When a user joins a room this processes the request.
+		socket.on('privateRoomExists', function (nameObj, fn) {
+		var theExistingRoom;
+		var room = nameObj.currentUser + "-" + nameObj.nick;
+		var roomName2 = nameObj.nick + "-"  + nameObj.currentUser;
+		fn(true);
+
+		if(privateChats[room] !== undefined ) {
+			theExistingRoom = room;
+			fn(false);
+
+		}else if (privateChats[roomName2] !== undefined) {
+			theExistingRoom = roomName2;
+			fn(false);
+		}
+
+		fn(false, theExistingRoom);
+	});
+
 	socket.on('joinPrivateRoom', function (roomName)
 	{
 		console.log("ROMNAME :    " + roomName);

@@ -33,7 +33,21 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
 
 
   $scope.moveToPrivateRoom = function(item){
+
+    socket.emit('privateRoomExists', {'current': $scope.curretUser, 'nick': item}, function (available) {
+      if (available) {
         $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' + item) ;
+
+      }
+      else {
+        $location.path('/private/' + $scope.currentUser + '/' + available.theExistingRoom + '/0') ;
+        console.log("the existing " + available.theExistingRoom);
+
+        }
+    });
+
+
+
 
   };
   $scope.moveToExistingPrivateRoom = function(item){
