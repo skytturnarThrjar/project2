@@ -31,22 +31,25 @@ socket.on('recv_privatemsg', function(current ,message) {
         console.log("Komst inní includes");
         var array = $routeParams.ChatFriend.split('-');
         console.log(array[0]);
-        if( array[0] == $scope.currentUser) {
+        if( array[0] === $scope.currentUser) {
           console.log("Current User : " + $scope.currentUser + "arrayið segir : " + array[0]);
           console.log("hinn nick : " + array[1]);
           $scope.friendName =  array[1];
-        }
-        else {
+        } else {
+          console.log("FÓR HÉR Else 1 ");
           $scope.friendName =  array[0];
         }
       }
       else{
+        console.log("FÓR HÉR Else 2 ");
 
         $scope.friendName = $scope.privatChatFriend;
 
       }
       console.log("privatemsg end");
       console.log("FREND NAME BEFORE SOCEKT " + $scope.friendName);
+      console.log("CURRENT NAME BEFORE SOCEKT " + $scope.currentUser);
+
        socket.emit('privatemsg',{currentUser:$scope.currentUser , nick: $scope.friendName, message:$scope.message} , function (available) {
         // $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
 
@@ -54,7 +57,6 @@ socket.on('recv_privatemsg', function(current ,message) {
            console.log( "CURRENT "+ $scope.currentUser);
            console.log( "FRIEND " + $scope.friendName);
 
-          //  $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
            console.log("Working");
           }
           else {

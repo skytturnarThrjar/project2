@@ -143,11 +143,10 @@ io.sockets.on('connection', function (socket) {
 			console.log( "HHHHHHHHHHH roomName"  + messageObj.currentUser + "-" + messageObj.nick);
 			console.log( "HHHHHHHHHHH roomName2"  + messageObj.nick + "-"  + messageObj.currentUser);
 
-			var roomName = messageObj.currentUser + "-" + messageObj.nick;
+			var room = messageObj.currentUser + "-" + messageObj.nick;
 			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
 
 			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
- 					var room = roomName;
 
 					//If the room does not exist
 					if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
@@ -160,15 +159,22 @@ io.sockets.on('connection', function (socket) {
 												users[messageObj.currentUser].privaterooms[room] = room;
 												users[messageObj.nick].privaterooms[room] = room;
 						}
-
+						else if(privateChats[room] !== undefined )
+						{
+						}
+						else if(privateChats[roomName2] !== undefined )
+						{
+							room = roomName2;
+						}
 
 						io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
 						io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
-
+console.log(room);
+console.log(privateChats[room]);
 						privateChats[room].addPrivateMessage(messageObj);
 
 					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-					io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+					//io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
 
 			//Send the message only to this user.
 			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
