@@ -15,7 +15,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   };
 
   $scope.moveToRoom = function(name){
-    socket.emit('joinroom', {'room': name}, function (available) {
+    socket.emit('reasonroom', {'room': name}, function (available) {
       if (available) {
         $location.path('/room/' + $scope.currentUser + '/' + name);
       }
@@ -33,23 +33,24 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
 
 
   $scope.moveToPrivateRoom = function(item){
-
-    socket.emit('privateRoomExists', {'current': $scope.curretUser, 'nick': item}, function (available) {
-      if (available) {
-        $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' + item) ;
-
+    console.log("moveToPrivateRoom");
+    console.log("item  " + item);
+    var array = item.split('/');
+    console.log("array 0  " + array[0]);
+    socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
+    console.log("eftir roomExists");
+    socket.on('getRoom', function(room){
+      console.log("inn i getRoom");
+      console.log("Rooom  " + room);
+      if(room === "nothing") {
+        $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+      } else {
+        $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
       }
-      else {
-        $location.path('/private/' + $scope.currentUser + '/' + available.theExistingRoom + '/0') ;
-        console.log("the existing " + available.theExistingRoom);
-
-        }
     });
 
-
-
-
   };
+
   $scope.moveToExistingPrivateRoom = function(item){
     console.log(  $location.path('/private/' + $scope.currentUser +  '/' +item));
         $location.path('/private/' + $scope.currentUser + '/' +  item + '/0') ;
