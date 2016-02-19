@@ -33,7 +33,8 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
 
 
   $scope.moveToPrivateRoom = function(item){
-        $location.path('/private/' + $scope.currentUser + '/' + item);
+        $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' + item) ;
+
   };
 
 // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég

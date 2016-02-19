@@ -25,9 +25,11 @@ socket.on('recv_privatemsg', function(current ,message) {
 
   $scope.privatemsg = function() {
       console.log("privatemsg AAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBA");
-      console.log($scope.privatChatFriend);
-      if( $scope.privatChatFriend.includes('-')){
-        var array = $scope.privatChatFriend.split('-');
+      console.log("NAME" + $scope.privatChatFriend);
+      console.log("VOL 2 + " + $routeParams.ChatFriend );
+      if( $routeParams.ChatFriend.includes('-')){
+        console.log("Komst inní includes");
+        var array = $routeParams.ChatFriend.split('-');
         console.log(array[0]);
         if( array[0] == $scope.currentUser) {
           console.log("Current User : " + $scope.currentUser + "arrayið segir : " + array[0]);
@@ -52,7 +54,7 @@ socket.on('recv_privatemsg', function(current ,message) {
            console.log( "CURRENT "+ $scope.currentUser);
            console.log( "FRIEND " + $scope.friendName);
 
-           $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
+          //  $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
            console.log("Working");
           }
           else {
