@@ -35,23 +35,14 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.moveToPrivateRoom = function(item){
         $location.path('/private/' + $scope.currentUser + '/' + item);
   };
-//
-      //  console.log("her!");
 
+// hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
   socket.on('privateRoomList',function(list) {
     $scope.privateRoomList = list;
     console.log($scope.privateRoomList);
   });
   socket.emit('privateRoom',$scope.currentUser);
 
-
-  // socket.on('privateRooms', function(users) {
-  //   // console.log(users);
-  //   $scope.privateRoomList = users;
-  //   console.log($scope.privateRoomList);
-  //
-  // });
-  // socket.emit('users');
 
 
 

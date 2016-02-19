@@ -23,13 +23,11 @@
 <!--geta ýtt á user og gert kickout og nýtt chat og fl-->
 <ul>
   <li ng-repeat="item in activeUsers">
-    <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
+    <a href ng-click="moveToPrivateRoom(item + '/1')">{{item}}</a>
   </li>
 </ul>
 </div>
 </div>
-
-<a href ng-click="moveToPrivateRoom()">TEST</a>
 
 <div class="row">
   <div class="col-xs-12">
@@ -40,6 +38,6 @@
 
 <ul>
   <li ng-repeat="item in privateRoomList">
-    <a href ng-click="moveToPrivateRoom(item)">{{item}}</a>
+    <a href ng-click="moveToPrivateRoom(item +  '/0')">{{item}}</a>
   </li>
 </ul>

@@ -129,7 +129,10 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('privatemsg', function (msgObj, fn) {
 		//If user exists in global user list.
-		if(users[msgObj.nick] !== undefined) {
+		console.log( "HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		if(msgObj.nick !== undefined) {
+			console.log( "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
 			var messageObj = {
 				nick : msgObj.nick,
@@ -137,9 +140,11 @@ io.sockets.on('connection', function (socket) {
 				message : msgObj.message.substring(0, 200),
 				currentUser: msgObj.currentUser
 			};
+			console.log( "HHHHHHHHHHH roomName"  + messageObj.currentUser + "-" + messageObj.nick);
+			console.log( "HHHHHHHHHHH roomName2"  + messageObj.nick + "-"  + messageObj.currentUser);
 
-			var roomName = messageObj.currentUser + " and " + messageObj.nick;
-			var roomName2 = messageObj.nick + " and "  + messageObj.currentUser ;
+			var roomName = messageObj.currentUser + "-" + messageObj.nick;
+			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
 
 			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
  					var room = roomName;
@@ -151,12 +156,14 @@ io.sockets.on('connection', function (socket) {
 						privateChats[room] = new PriveateRoom();
 						//Op the user if he creates the room.
 
-						//Keep track of the room in the user object.
-						users[messageObj.currentUser].privaterooms[room] = room;
-						users[messageObj.nick].privaterooms[room] = room;
+												//Keep track of the room in the user object.
+												users[messageObj.currentUser].privaterooms[room] = room;
+												users[messageObj.nick].privaterooms[room] = room;
 						}
-						io.sockets.emit('roomlist',privateChats);// This line was added
-						console.log('rooms updated',privateChats);// This line was added
+
+
+						io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
+						io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
 
 						privateChats[room].addPrivateMessage(messageObj);
 
@@ -170,6 +177,13 @@ io.sockets.on('connection', function (socket) {
 			fn(true);
 		}
 		fn(false);
+	});
+
+	socket.on('joinPrivateRoom', function (roomName)
+	{
+		console.log("ROMNAME :    " + roomName);
+		console.log("USERNAME :      "+ socket.username);
+		io.sockets.emit('recv_privatemsg', socket.username, 	privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
 	});
 
 	socket.on('privateRoom', function(current ) {
@@ -357,7 +371,6 @@ function User(username) {
 	this.addPrivateMessage = function(message) {
 		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
 	};
-
 }
 
 function PriveateRoom() {

@@ -12,7 +12,7 @@ chatApp.config(["$routeProvider",function ($routeProvider) {
 		templateUrl: "/src/room/Room.html",
 		controller: "RoomController"
 	})
-	.when("/private/:user/:ChatFriend", {
+	.when("/private/:user/:ChatFriend/:newChat", {
 		templateUrl: "/src/privatemessage/PrivateMessage.html",
 		controller: "PrivateMessageController"
 	})
