@@ -11,10 +11,12 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.messageTimer = false;
 
   //SKÍTMIX HEHEHE KLÁRA ÞETTA
-  
-  socket.emit('joinroom', {'room': $scope.roomName}, function (available) {
-    //if currentUser er banned frá þessu herbergi þá má hann ekki
-  });
+
+  //if currentUser er banned frá þessu herbergi þá má hann ekki
+  if($scope.bannedUsers.indexOf($scope.currentUser) !== -1) {
+    socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
+  }
+  socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
 
   //CHECK UP ON THE SERVER MESSAGE
 
@@ -136,6 +138,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   socket.on('banned', function(roomName, user, ops) {
     if(roomName === $scope.roomName && user === $scope.currentUser) {
       //ef þetta ert þú sem er verið að banna -> til baka
+      $scope.bannedUsers.push(user);
       $location.path('/roomlist/' + $scope.currentUser + '/');
     }
   });

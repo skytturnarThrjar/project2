@@ -45,7 +45,6 @@ io.sockets.on('connection', function (socket) {
 		var reason;
 
 		//If the room does not exist
-		console.log("ROOM: ");
 		if(rooms[room] === undefined) {
 			rooms[room] = new Room();
 			//Op the user if he creates the room.
@@ -158,7 +157,7 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	// when the user disconnects.. perform this
-	socket.on('disconnect', function(){
+	socket.on('disconnectPlease', function(){
 		if(socket.username) {
 			//If the socket doesn't have a username the client joined and parted without
 			//chosing a username, so we just close the socket without any cleanup.
@@ -173,6 +172,11 @@ io.sockets.on('connection', function (socket) {
 			io.sockets.emit('servermessage', "quit", users[socket.username].channels, socket.username);
 			//Remove the user from the global user roster.
 			delete users[socket.username];
+			var userlist = [];
+			for(var user in users) {
+				userlist.push(user);
+			}
+			io.sockets.emit('userlist', userlist);
 		}
 	});
 
