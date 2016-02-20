@@ -40,6 +40,20 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
+	/*socket.on('roomOwner', function(nameObj) {
+		var roomName =  nameObj.curr + "-" + nameObj.other;
+	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+		var bo = false;
+
+		if(users[nameObj.curr].privaterooms[roomName] !== undefined) {
+			bo = true;
+		} else if (users[nameObj.curr].privaterooms[roomName2] !== undefined) {
+			bo = true;
+		}
+
+		io.sockets.emit('isOwner', bo);
+	});*/
+
 	socket.on('roomExists', function(nameObj) {
 
 	  var roomName =  nameObj.curr + "-" + nameObj.other;
@@ -208,7 +222,7 @@ console.log(privateChats[room]);
 						privateChats[room].addPrivateMessage(messageObj);
 
 					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-					//io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+					io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
 
 			//Send the message only to this user.
 			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
@@ -221,7 +235,7 @@ console.log(privateChats[room]);
 
 
 	//When a user joins a room this processes the request.
-		socket.on('privateRoomExists', function (nameObj, fn) {
+		/*socket.on('privateRoomExists', function (nameObj, fn) {
 		var theExistingRoom;
 		var room = nameObj.currentUser + "-" + nameObj.nick;
 		var roomName2 = nameObj.nick + "-"  + nameObj.currentUser;
@@ -237,7 +251,7 @@ console.log(privateChats[room]);
 		}
 
 		fn(false, theExistingRoom);
-	});
+	});*/
 
 	socket.on('joinPrivateRoom', function (roomName)
 	{
