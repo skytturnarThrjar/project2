@@ -1,40 +1,21 @@
-angular.module('chatApp').controller('RoomlistController', ['$scope', 'socket', '$location', '$routeParams', function ($scope, socket, $location, $routeParams) {
+// angular.module("chatApp").controller("RoomlistController", ["$scope".function($scope) {
+angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", "$routeParams", function ($scope, socket, $location, $routeParams) {
+
+  socket.on("roomlist", function(rooms) {
+    $scope.roomlist = rooms;
+  });
+  socket.emit('rooms');
 
   $scope.errorMessage = '';
   $scope.roomName = '';
   $scope.currentUser = $routeParams.user;
 
-  //UPDATE ROOMLIST
-  socket.on('roomlist', function(rooms) {
-    $scope.roomlist = rooms;
-  });
-  socket.emit('rooms');
-
-  //UPDATE USERLIST
-  socket.on('userlist', function(users) {
-    $scope.activeUsers = users;
-  });
-  socket.emit('users');
-
-  //LOGOUT
-
-  $scope.logout = function() {
-    socket.emit('disconnectPlease');
-    $location.path('/login');
-  };
-
-  //CREATE NEW ROOM
-
   $scope.newRoom = function(){
-    if($scope.roomName !== '') {
-      socket.emit('joinroom', {'room': $scope.roomName});
-    }
+    socket.emit('joinroom', {'room': $scope.roomName});
   };
-
-  //MOVE TO ROOM
 
   $scope.moveToRoom = function(name){
-    socket.emit('joinroom', {'room': name}, function (available) {
+    socket.emit('reasonroom', {'room': name}, function (available) {
       if (available) {
         $location.path('/room/' + $scope.currentUser + '/' + name);
       }
@@ -44,32 +25,59 @@ angular.module('chatApp').controller('RoomlistController', ['$scope', 'socket', 
     });
   };
 
-  //CLEAR INPUT FIELD
+  socket.on('userlist', function(users) {
+    // console.log(users);
+    $scope.activeUsers = users;
+  });
+  socket.emit('users');
 
-  $scope.clearfunction = function(event){
-    event.roomName = '';
+
+  /*$scope.moveToPrivateRoom = function(item){
+
+    var array = item.split('/');
+    socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
+    socket.on('getRoom', function(room){
+      if(room === "nothing") {
+        $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+      } else {
+        //add to room list eða make room
+        $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
+      }
+    });
+
   };
+
+  $scope.moveToExistingPrivateRoom = function(item){
+        $location.path('/private/' + $scope.currentUser + '/' +  item + '/0') ;
+
+  };*/
 
   //MOVE TO PRIVATE ROOM
   $scope.moveToPrivateRoom = function(curr, item){
 
-     var array = item.split('/');
-     if(curr === $scope.currentUser) {
-       console.log("HELLL");
-       console.log($scope.currentUser);
-       console.log(curr);
+    var array = item.split('/');
+    socket.emit('roomOwner', {'curr': $scope.currentUser, 'other': array[0]});
+    socket.on('isOwner', function(bo){
+      if(bo) {
 
-       socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
-       socket.on('getRoom', function(room){
+        if(curr === $scope.currentUser) {
+          console.log("HELLL");
+          console.log($scope.currentUser);
+          console.log(curr);
 
-         if(room === "nothing") {
-             $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+          socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
+          socket.on('getRoom', function(room){
 
-         } else {
-             $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
-         }
-     });
-   }
+            if(room === "nothing") {
+              $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+
+            } else {
+              $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
+            }
+          });
+        }
+      }
+    });
    };
 
   $scope.moveToExistingPrivateRoom = function(curr, item){
@@ -77,11 +85,14 @@ angular.module('chatApp').controller('RoomlistController', ['$scope', 'socket', 
       $location.path('/private/' + $scope.currentUser + '/' +  item + '/0') ;
     }
   };
-
 // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
   socket.on('privateRoomList',function(list) {
     $scope.privateRoomList = list;
     console.log($scope.privateRoomList);
-  });
+  });///er /etta ad gera eh ??? elin
   socket.emit('privateRoom',$scope.currentUser);
+
+
+
+
 }]);

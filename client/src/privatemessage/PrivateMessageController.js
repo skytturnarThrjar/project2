@@ -6,14 +6,15 @@ $scope.currentUser = $routeParams.user;
 $scope.privatChatFriend = $routeParams.ChatFriend;
 $scope.isNewChat =  $routeParams.newChat;
 
-if($scope.isNewChat === '0') // 1 is new
+/*if($scope.isNewChat === '0') // 1 is new
 {
     socket.emit('joinPrivateRoom',  $scope.privatChatFriend);
-}
+}*/
 
 socket.emit('recv_privatemsg');
 
 socket.on('recv_privatemsg', function(current ,message) {
+  console.log("function recv_privatemsg:  " +  current);
   if($scope.currentUser === current) {
     $scope.currentUser = current;
     $scope.messageHistory = message;

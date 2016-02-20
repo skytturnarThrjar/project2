@@ -40,6 +40,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
   });
 
+
   //TIMER ON MESSAGES
 
   $scope.messageOnTime = function() {
