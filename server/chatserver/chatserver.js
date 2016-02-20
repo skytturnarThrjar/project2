@@ -11,6 +11,8 @@ var rooms = {};
 //Global user object, since we want to know what rooms each user is in etc.
 var users = {};
 
+var privateChats = {};
+
 //Default room.
 rooms.lobby = new Room();
 rooms.lobby.setTopic("Welcome to the lobby!");
@@ -19,11 +21,13 @@ io.sockets.on('connection', function (socket) {
 
 	//This gets performed when a user joins the server.
 	socket.on('adduser', function(username, fn){
+
 		//Check if username is avaliable.
 		if (users[username] === undefined && username.toLowerCase != "server" && username.length < 21) {
 			socket.username = username;
+
 			//Store user object in global user roster.
-			users[username] = { username: socket.username, channels: {}, socket: this};
+			users[username] = new User(socket.username);
 			fn(true); // Callback, user name was available
 			var userlist = [];
 			for(var user in users) {
@@ -35,6 +39,36 @@ io.sockets.on('connection', function (socket) {
 			fn(false); // Callback, it wasn't available
 		}
 	});
+
+	socket.on('roomExists', function(nameObj) {
+
+	  var roomName =  nameObj.curr + "-" + nameObj.other;
+	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+	  var room;
+
+
+		if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
+
+			privateChats[roomName] = new PriveateRoom();
+			//Op the user if he creates the room.
+
+			//Keep track of the room in the user object.
+			users[nameObj.curr].privaterooms[roomName] = room;
+			users[nameObj.other].privaterooms[roomName] = room;
+		}
+
+	  //If the room does not exist
+	  if(privateChats[roomName2] !== undefined) {
+	    room = roomName2;
+	  } else if(privateChats[roomName] !== undefined) {
+	    room = roomName;
+	  }
+	  else {
+	    room = "nothing";
+	  }
+	  io.sockets.emit('getRoom', room);
+	});
+
 
 	//When a user joins a room this processes the request.
 	socket.on('joinroom', function (joinObj, fn) {
@@ -89,12 +123,7 @@ io.sockets.on('connection', function (socket) {
 			//We need to let the server know beforehand so that he starts to prepare the client template.
 			fn(true);
 			//Add user to room.
-			//sleppa þessu þegar ops
-			//HALLO HER!!!
-			//if(rooms[room].ops[socket.username] !== socket.username) {
-
-				rooms[room].addUser(socket.username);
-			//}
+			rooms[room].addUser(socket.username);
 			//Keep track of the room in the user object.
 			users[socket.username].channels[room] = room;
 			//Send the room information to the client.
@@ -133,23 +162,104 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('privatemsg', function (msgObj, fn) {
-
 		//If user exists in global user list.
-		if(users[msgObj.nick] !== undefined) {
+		console.log( "HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		if(msgObj.nick !== undefined) {
+			console.log( "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
+			var messageObj = {
+				nick : msgObj.nick,
+				timestamp :  new Date(),
+				message : msgObj.message.substring(0, 200),
+				currentUser: msgObj.currentUser
+			};
+			console.log( "HHHHHHHHHHH roomName"  + messageObj.currentUser + "-" + messageObj.nick);
+			console.log( "HHHHHHHHHHH roomName2"  + messageObj.nick + "-"  + messageObj.currentUser);
+
+			var room = messageObj.currentUser + "-" + messageObj.nick;
+			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
+
+			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
+
+					//If the room does not exist
+					if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
+						console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ room + " " + roomName2);
+
+						privateChats[room] = new PriveateRoom();
+						//Op the user if he creates the room.
+
+												//Keep track of the room in the user object.
+												users[messageObj.currentUser].privaterooms[room] = room;
+												users[messageObj.nick].privaterooms[room] = room;
+						}
+						else if(privateChats[room] !== undefined )
+						{
+						}
+						else if(privateChats[roomName2] !== undefined )
+						{
+							room = roomName2;
+						}
+
+						io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
+						io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
+console.log(room);
+console.log(privateChats[room]);
+						privateChats[room].addPrivateMessage(messageObj);
+
+					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+					//io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+
 			//Send the message only to this user.
-			users[msgObj.nick].socket.emit('recv_privatemsg', socket.username, msgObj.message);
+			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
+
 			//Callback recieves true.
 			fn(true);
 		}
 		fn(false);
 	});
 
+
+	//When a user joins a room this processes the request.
+		socket.on('privateRoomExists', function (nameObj, fn) {
+		var theExistingRoom;
+		var room = nameObj.currentUser + "-" + nameObj.nick;
+		var roomName2 = nameObj.nick + "-"  + nameObj.currentUser;
+		fn(true);
+
+		if(privateChats[room] !== undefined ) {
+			theExistingRoom = room;
+			fn(false);
+
+		}else if (privateChats[roomName2] !== undefined) {
+			theExistingRoom = roomName2;
+			fn(false);
+		}
+
+		fn(false, theExistingRoom);
+	});
+
+	socket.on('joinPrivateRoom', function (roomName)
+	{
+		console.log("ROMNAME :    " + roomName);
+		console.log("USERNAME :      "+ socket.username);
+		io.sockets.emit('recv_privatemsg', socket.username, 	privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
+	});
+
+	socket.on('privateRoom', function(current ) {
+		var privateRom = [];
+		console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ current);
+		 for(var rooms in users[current].privaterooms) {
+		 	privateRom.push(rooms);
+		 }
+		socket.emit('privateRoomList', privateRom);
+	});
+
 	//When a user leaves a room this gets performed.
 	socket.on('partroom', function (room) {
 		//remove the user from the room roster and room op roster.
 		delete rooms[room].users[socket.username];
-		//delete rooms[room].ops[socket.username]; COMMENTAÐI ÞETTA ÚT TIL AÐ LÁTA CREATOR EKKI HÆTTA AÐ VERA CREATOR ÞEGAR HANN FER ÚT
-		//Remove the channel from the user object in the global user roster.
+	//delete rooms[room].ops[socket.username]; COMMENTAÐI ÞETTA ÚT TIL AÐ LÁTA CREATOR EKKI HÆTTA AÐ VERA CREATOR ÞEGAR HANN FER ÚT		//Remove the channel from the user object in the global user roster.
 		delete users[socket.username].channels[room];
 		//Update the userlist in the room.
 		io.sockets.emit('updateusers', room, rooms[room].users, rooms[room].ops);
@@ -205,8 +315,7 @@ io.sockets.on('connection', function (socket) {
 		console.log(socket.username + " opped " + opObj.user + " from " + opObj.room);
 		if(rooms[opObj.room].ops[socket.username] !== undefined) {
 			//Remove the user from the room roster.
-			//delete rooms[opObj.room].users[opObj.user]; EKKI HAFA ÞETTA ??? VALA
-			//Op the user.
+			//delete rooms[opObj.room].users[opObj.user]; EKKI HAFA ÞETTA ??? VALA			//Op the user.
 			rooms[opObj.room].ops[opObj.user] = opObj.user;
 			//Broadcast to the room who got opped.
 			io.sockets.emit('opped', opObj.room, opObj.user, socket.username);
@@ -314,6 +423,33 @@ io.sockets.on('connection', function (socket) {
 		fn(false);
 	});
 });
+
+
+function User(username) {
+	this.username = username;
+	this.channels =  {};
+	this.socket = this;
+	this.privateMessageHistory = [],
+	this.privaterooms = {},
+	this.addPrivateMessage = function(message) {
+		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
+	};
+}
+
+function PriveateRoom() {
+	this.users = {},
+	this.ops = {},
+	this.banned = {},
+	this.privateMessageHistory = [],
+	this.topic = "No topic has been set for room..",
+	this.locked = false,
+	this.password = "",
+
+	this.addPrivateMessage = function(message) {
+		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
+	};
+
+}
 
 //Define the Room class/object.
 function Room() {

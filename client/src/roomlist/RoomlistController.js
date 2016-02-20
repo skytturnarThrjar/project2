@@ -49,4 +49,39 @@ angular.module('chatApp').controller('RoomlistController', ['$scope', 'socket', 
   $scope.clearfunction = function(event){
     event.roomName = '';
   };
+
+  //MOVE TO PRIVATE ROOM
+  $scope.moveToPrivateRoom = function(curr, item){
+
+     var array = item.split('/');
+     if(curr === $scope.currentUser) {
+       console.log("HELLL");
+       console.log($scope.currentUser);
+       console.log(curr);
+
+       socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
+       socket.on('getRoom', function(room){
+
+         if(room === "nothing") {
+             $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+
+         } else {
+             $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
+         }
+     });
+   }
+   };
+
+  $scope.moveToExistingPrivateRoom = function(curr, item){
+    if(curr === $scope.currentUser) {
+      $location.path('/private/' + $scope.currentUser + '/' +  item + '/0') ;
+    }
+  };
+
+// hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
+  socket.on('privateRoomList',function(list) {
+    $scope.privateRoomList = list;
+    console.log($scope.privateRoomList);
+  });
+  socket.emit('privateRoom',$scope.currentUser);
 }]);
