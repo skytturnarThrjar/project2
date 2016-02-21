@@ -6,8 +6,12 @@ function ($scope, socket, $routeParams, $location) {
   $scope.privatChatFriend = $routeParams.ChatFriend;
   $scope.isNewChat =  $routeParams.newChat;
 
+
+  socket.emit('joinPrivateRoom', $scope.privatChatFriend);
+
   //LAGA - INCLUDEAR ALLTAF -
   //Get the username of the friend
+
   if($routeParams.ChatFriend.includes('-')) {
     var array = $routeParams.ChatFriend.split('-');
     if(array[0] === $scope.currentUser) {
@@ -21,8 +25,8 @@ function ($scope, socket, $routeParams, $location) {
     $scope.friendName = $scope.privatChatFriend;
   }
 
-  socket.emit('recv_privatemsg');
-  socket.on('recv_privatemsg', function(current ,message) {
+  //socket.emit('recv_privatemsg');
+  socket.on('recv_privatemsg', function(current, message) {
     console.log("function recv_privatemsg:  " +  current);
     if($scope.currentUser === current) {
       $scope.currentUser = current;
@@ -39,4 +43,19 @@ function ($scope, socket, $routeParams, $location) {
       }
     });
   };
+
+  $scope.clearfunction = function(){
+    $scope.message = '';
+  };
+
+  $scope.messageNotEmpty = function() {
+    if($scope.message === '' || $scope.message === null) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  };
+
+
 }]);

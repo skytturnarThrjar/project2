@@ -2,7 +2,7 @@
 <div>
   <h2>{{roomName}}</h2>
 
-  <div class="row" id="info" ng-show="showMessage">
+  <div class="row info" ng-show="showMessage">
     <div class="col-xs-12">
       {{infoMessage}}
     </div>
@@ -10,11 +10,10 @@
 
   <div class="row">
 		<div class="col-xs-12">
-      <ul class="list-group col-lg-5">
+      <ul class="list-group col-lg-5 messageList">
       <li class="list-group-item" ng-repeat="message in messageHistory">
-        <!-- <div> Nick : {{nick}}  Message: {{message}}  Timestamp: {{timestamp}}</div> -->
         <div class="chatNick"> {{message.nick}}</div>
-        <div class="chatTimestamp"> {{message.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+        <div class="chatTimestamp"> {{message.timestamp | date:'HH:mm dd/MM yyyy'}}</div>
         <div> {{message.message}}</div>
       </li>
     </ul>
@@ -30,7 +29,7 @@
 
   <div class="row">
     <div class="col-xs-12 col-lg-5">
-      <button class="btn btn-primary buttons" ng-click="sendmsg(); clearfunction(this)">Send</button>
+      <button class="btn btn-primary buttons" ng-click="sendmsg(); clearfunction()" ng-if="messageNotEmpty()">Send</button>
     </div>
   </div>
 
@@ -38,7 +37,6 @@
     <div class="row">
       <div class="col-xs-12">
         <h2>Active users in {{roomName}} </h2>
-          <!--geta ýtt á user og gert kickout og nýtt chat og fl-->
           <ul class="list-group col-lg-4">
             <!--þarf ops her?-->
             <!--<li class="list-group-item" ng-repeat="(name, user) in currentOps"> {{user}}
@@ -65,6 +63,6 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
-    <button class="btn btn-primary backButtons" ng-click="logout()">Logout</button>
+    <button class="btn btn-primary backButtons" ng-click="logout()">Log out</button>
   </div>
 </div>

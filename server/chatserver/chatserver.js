@@ -241,7 +241,7 @@ console.log(privateChats[room]);
 
 	socket.on('getPriHistory', function (nameObj) {
 		io.sockets.emit('recv_privatemsg', nameObj.currentUser, 	privateChats[nameObj.room].privateMessageHistory);
-		io.sockets.emit('recv_privatemsg', nameObj.nick, 	privateChats[nameObj.room].privateMessageHistory); 
+		io.sockets.emit('recv_privatemsg', nameObj.nick, 	privateChats[nameObj.room].privateMessageHistory);
 	});
 	//When a user joins a room this processes the request.
 		/*socket.on('privateRoomExists', function (nameObj, fn) {

@@ -2,13 +2,16 @@ body {
   padding: 20px;
 }
 
-.chatNick {
+.wrapper {
   float: right;
+}
+.chatNick {
+  font-size: 14pt;
   font-weight: bold;
 }
 
 .chatTimestamp {
-  float: right;
+  font-size: 8pt;
 }
 
 .opsButtons {
@@ -23,6 +26,11 @@ body {
   display: inline-block;
 }
 
-#info {
+.info {
   color: #a5aaa7;
+}
+
+.messageList {
+  height:420px;
+  overflow:scroll;
 }

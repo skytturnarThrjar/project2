@@ -10,12 +10,10 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.showMessage = false;
   $scope.messageTimer = false;
 
-  //SKÍTMIX HEHEHE KLÁRA ÞETTA
-
   //if currentUser er banned frá þessu herbergi þá má hann ekki
-  if($scope.bannedUsers.indexOf($scope.currentUser) !== -1) {
-    socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
-  }
+  // if($scope.bannedUsers.indexOf($scope.currentUser) !== -1) {
+  //   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
+  // }
   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
 
   //CHECK UP ON THE SERVER MESSAGE
@@ -154,8 +152,17 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   });
 
   //CLEAR INPUT FIELD
+  $scope.clearfunction = function(){
+    $scope.message = '';
+  };
 
-  $scope.clearfunction = function(event){
-    event.message = null;
+  //CHECK IF THERE IS A MESSAGE
+  $scope.messageNotEmpty = function() {
+    if($scope.message === '' || $scope.message === null) {
+      return false;
+    }
+    else {
+      return true;
+    }
   };
 }]);
