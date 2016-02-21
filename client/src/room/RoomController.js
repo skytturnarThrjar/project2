@@ -144,6 +144,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
     }
   });
 
+
   //UPDATE CURRENT USERS
 
   socket.on('updateusers', function(roomName, users, ops) {

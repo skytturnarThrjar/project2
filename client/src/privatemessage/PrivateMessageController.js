@@ -6,24 +6,23 @@ $scope.currentUser = $routeParams.user;
 $scope.roomName = $routeParams.room;
 $scope.friendName = $routeParams.friend;
 
+console.log($scope.roomName);
 //NEW BEGINING
 socket.emit('joinPrivateRoom', {'room': $scope.roomName});
 
-//UPDATE CHAT
+socket.on('currUserFromServer', function(curr,roomName) {
+  console.log($scope.roomName);
+  console.log($scope.currentUser);
+  if(roomName === $scope.roomName && curr === $scope.currentUser) {
 
-// socket.on('updatePrivateChat', function(room,chat) {
-//   if($scope.roomName == room) {
-//     $scope.messageHistory = chat;
-//     $scope.roomName = room;
-//   }
-// });
+      if($scope.currentUser + '-' + $scope.friendName === $routeParams.room || $scope.friendName + '-' + $scope.currentUser === $routeParams.room ) {
+        socket.emit('joinPrivateRoom', {'room': $scope.roomName});
 
-
-socket.on('recv_privatemsg', function(room ,message) {
-  if($scope.currentUser + '-' + $scope.friendName === $routeParams.room || $scope.friendName + '-' + $scope.currentUser === $routeParams.room ) {
-    $scope.messageHistory = message;
-  }
+      }
+    }
 });
+
+
 
   //SEND MESSAGE
   //
@@ -33,6 +32,21 @@ socket.on('recv_privatemsg', function(room ,message) {
   $scope.sendPrivatemsg = function() {
     socket.emit('privatemsg',{ currentUser:$scope.currentUser , nick: $scope.friendName, roomName:$scope.roomName,  message:$scope.message});
   };
+
+  socket.on('currUserFromServer', function(curr,roomName) {
+    console.log($scope.roomName);
+    console.log($scope.currentUser);
+    if(roomName === $scope.roomName && curr === $scope.currentUser) {
+      socket.on('recv_privatemsg', function(room ,message) {
+        console.log("ATH :");
+        console.log($scope.currentUser + '-' + $scope.friendName);
+        console.log($routeParams.room);
+        if($scope.currentUser + '-' + $scope.friendName === $routeParams.room || $scope.friendName + '-' + $scope.currentUser === $routeParams.room ) {
+          console.log( "herna! ");
+          $scope.messageHistory = message;
+        }
+      });    }
+  });
 
 
 }]);

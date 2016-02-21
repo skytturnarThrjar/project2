@@ -44,10 +44,10 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.moveToPrivateRoom = function(friendName){
 
     socket.emit('roomExists', {'curr': $scope.currentUser, 'friend':friendName});
-
+    var  roomName =  $scope.currentUser + '-' + friendName;
+console.log(roomName);
     socket.on('getRoom', function(room){
         if(room === "NotExist") {
-          var  roomName =  $scope.currentUser + '-' + friendName;
           socket.emit('joinPrivateRoom', {'room': room}, function (available) {
             if (available) {
               $location.path('/private/' + $scope.currentUser + '/' + friendName + '/' +roomName) ;
@@ -58,9 +58,9 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
           });
         }
         else {
-          socket.emit('joinPrivateRoom', {'room': room}, function (available) {
+          socket.emit('joinPrivateRoom', {'room': roomName}, function (available) {
             if (available) {
-              $location.path('/private/' + $scope.currentUser + '/' + friendName + '/' + room) ;
+              $location.path('/private/' + $scope.currentUser + '/' + friendName + '/' + roomName) ;
             }
             else {
               $scope.errorMessage = 'Cannot join room';

@@ -52,8 +52,8 @@ io.sockets.on('connection', function (socket) {
 			privateChats[roomName] = new PriveateRoom();
 
 			//Keep track of the room in the user object.
-			users[nameObj.curr].privaterooms[roomName] = room;
-			users[nameObj.friend].privaterooms[roomName] = room;
+			users[nameObj.curr].privaterooms[roomName] = roomName;
+			users[nameObj.friend].privaterooms[roomName] = roomName;
 		}
 
 	  //If the room does not exist
@@ -71,13 +71,20 @@ io.sockets.on('connection', function (socket) {
 	socket.on('joinPrivateRoom', function(joinObj,fn) {
 
 		var room = joinObj.room;
+		var accepted = true;
+		console.log("HERNAAAAAAAAAAA");
+		console.log(socket.username);
+		console.log (users[socket.username].privaterooms[room] );
 
-		socket.emit('recv_privatemsg', room, privateChats[room].messageHistory);
+		if( users[socket.username].privaterooms[room] !== undefined)
+		{
+			fn(true);
+			privateChats[room].addUser(socket.username);
+			io.sockets.emit('currUserFromServer', socket.username, room);
 
-		fn(true);
-
+			socket.emit('recv_privatemsg', room, privateChats[room].messageHistory);
+		}
 	});
-
 
 	//When a user joins a room this processes the request.
 	socket.on('joinroom', function (joinObj, fn) {
@@ -183,7 +190,11 @@ io.sockets.on('connection', function (socket) {
 			console.log(privateChats[room].privateMessageHistory);
 			console.log("HERNAAAAAAAAAAA :    " + room);
 			privateChats[room].addPrivateMessage (messageObj);
+
 			io.sockets.emit('recv_privatemsg', room, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+			io.sockets.emit('recv_privatemsg', room, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+
+			//io.sockets.emit('recv_privatemsg', room, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
 	});
 
 
