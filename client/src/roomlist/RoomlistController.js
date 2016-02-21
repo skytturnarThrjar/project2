@@ -56,13 +56,11 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.moveToPrivateRoom = function(curr, item){
 
     var array = item.split('/');
-
-
-
         if(curr === $scope.currentUser) {
           console.log("HELLL");
           console.log($scope.currentUser);
           console.log(curr);
+          console.log("other user   " + item);
 
           socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
           socket.on('getRoom', function(room){
@@ -79,9 +77,6 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
           }
           });
         }
-      //});
-      //}
-    //});
    };
 
   $scope.moveToExistingPrivateRoom = function(curr, item){

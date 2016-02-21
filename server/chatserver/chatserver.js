@@ -85,6 +85,7 @@ io.sockets.on('connection', function (socket) {
 	  else {
 	    room = "nothing";
 	  }
+		
 	  io.sockets.emit('getRoom', room);
 	});
 
