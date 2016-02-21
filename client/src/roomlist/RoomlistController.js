@@ -42,6 +42,10 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
             }
             else {
               $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
+              //kalla á history
+              socket.emit('getPriHistory', {'currentUser': $scope.currentUser, 'room': room, 'nick' : array[0]});
+              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
             }
           }
         });

@@ -85,7 +85,7 @@ io.sockets.on('connection', function (socket) {
 	  else {
 	    room = "nothing";
 	  }
-		
+
 	  io.sockets.emit('getRoom', room);
 	});
 
@@ -239,7 +239,10 @@ console.log(privateChats[room]);
 		fn(false);
 	});
 
-
+	socket.on('getPriHistory', function (nameObj) {
+		io.sockets.emit('recv_privatemsg', nameObj.currentUser, 	privateChats[nameObj.room].privateMessageHistory);
+		io.sockets.emit('recv_privatemsg', nameObj.nick, 	privateChats[nameObj.room].privateMessageHistory); 
+	});
 	//When a user joins a room this processes the request.
 		/*socket.on('privateRoomExists', function (nameObj, fn) {
 		var theExistingRoom;
