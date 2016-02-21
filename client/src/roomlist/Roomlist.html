@@ -21,24 +21,12 @@
   <div class="col-xs-12">
     <h2>Active users </h2>
       <ul class="list-group col-lg-3">
-        <li class="list-group-item" ng-repeat="item in activeUsers">
-          <a href ng-click="moveToPrivateRoom(currentUser, item + '/1')">{{item}}</a>
+        <li class="list-group-item" ng-repeat="name in activeUsers">
+          <a href ng-click="moveToPrivateRoom(name)">{{name}}</a>
         </li>
       </ul>
   </div>
 </div>
-
-<div class="row">
-  <div class="col-xs-12">
-    <h2>Recent</h2>
-    <ul>
-      <li ng-repeat="item in privateRoomList">
-        <a href ng-click="moveToExistingPrivateRoom(currentUser, item)">{{item}}</a>
-      </li>
-    </ul>
-  </div>
-</div>
-
 
 <div class="row">
   <div class="col-xs-12">

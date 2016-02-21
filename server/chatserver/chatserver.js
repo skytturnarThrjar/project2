@@ -40,35 +40,20 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	/*socket.on('roomOwner', function(nameObj) {
-		var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
-		var bo = false;
-
-		if(users[nameObj.curr].privaterooms[roomName] !== undefined) {
-			bo = true;
-		} else if (users[nameObj.curr].privaterooms[roomName2] !== undefined) {
-			bo = true;
-		}
-
-		io.sockets.emit('isOwner', bo);
-	});*/
-
 	socket.on('roomExists', function(nameObj) {
 
-	  var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+	  var roomName =  nameObj.curr + "-" + nameObj.friend;
+	  var roomName2 = nameObj.friend + "-"  + nameObj.curr;
 	  var room;
 
 
 		if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
 
 			privateChats[roomName] = new PriveateRoom();
-			//Op the user if he creates the room.
 
 			//Keep track of the room in the user object.
 			users[nameObj.curr].privaterooms[roomName] = room;
-			users[nameObj.other].privaterooms[roomName] = room;
+			users[nameObj.friend].privaterooms[roomName] = room;
 		}
 
 	  //If the room does not exist
@@ -78,9 +63,19 @@ io.sockets.on('connection', function (socket) {
 	    room = roomName;
 	  }
 	  else {
-	    room = "nothing";
+	    room = "NotExist";
 	  }
 	  io.sockets.emit('getRoom', room);
+	});
+
+	socket.on('joinPrivateRoom', function(joinObj,fn) {
+
+		var room = joinObj.room;
+
+		socket.emit('recv_privatemsg', room, privateChats[room].messageHistory);
+
+		fn(true);
+
 	});
 
 
@@ -175,62 +170,20 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	socket.on('privatemsg', function (msgObj, fn) {
-		//If user exists in global user list.
-		console.log( "HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-		if(msgObj.nick !== undefined) {
-			console.log( "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-
+	socket.on('privatemsg', function (msgObj) {
 			var messageObj = {
 				nick : msgObj.nick,
 				timestamp :  new Date(),
 				message : msgObj.message.substring(0, 200),
-				currentUser: msgObj.currentUser
+				currentUser: msgObj.currentUser,
+				roomName: msgObj.roomName
 			};
-			console.log( "HHHHHHHHHHH roomName"  + messageObj.currentUser + "-" + messageObj.nick);
-			console.log( "HHHHHHHHHHH roomName2"  + messageObj.nick + "-"  + messageObj.currentUser);
 
-			var room = messageObj.currentUser + "-" + messageObj.nick;
-			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
-
-			// console.log("ABABABABABABABABABABABABABABABABABBABABABABABABABABABABAB :" + stri);
-
-					//If the room does not exist
-					if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
-						console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ room + " " + roomName2);
-
-						privateChats[room] = new PriveateRoom();
-						//Op the user if he creates the room.
-
-												//Keep track of the room in the user object.
-												users[messageObj.currentUser].privaterooms[room] = room;
-												users[messageObj.nick].privaterooms[room] = room;
-						}
-						else if(privateChats[room] !== undefined )
-						{
-						}
-						else if(privateChats[roomName2] !== undefined )
-						{
-							room = roomName2;
-						}
-
-						io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
-						io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
-console.log(room);
-console.log(privateChats[room]);
-						privateChats[room].addPrivateMessage(messageObj);
-
-					io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-					io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-
-			//Send the message only to this user.
-			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
-
-			//Callback recieves true.
-			fn(true);
-		}
-		fn(false);
+			var room = msgObj.roomName;
+			console.log(privateChats[room].privateMessageHistory);
+			console.log("HERNAAAAAAAAAAA :    " + room);
+			privateChats[room].addPrivateMessage (messageObj);
+			io.sockets.emit('recv_privatemsg', room, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
 	});
 
 
@@ -253,21 +206,21 @@ console.log(privateChats[room]);
 		fn(false, theExistingRoom);
 	});*/
 
-	socket.on('joinPrivateRoom', function (roomName)
-	{
-		console.log("ROMNAME :    " + roomName);
-		console.log("USERNAME :      "+ socket.username);
-		io.sockets.emit('recv_privatemsg', socket.username, 	privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
-	});
+	// socket.on('joinPrivateRoom', function (roomName)
+	// {
+	// 	console.log("ROMNAME :    " + roomName);
+	// 	console.log("USERNAME :      "+ socket.username);
+	// 	io.sockets.emit('recv_privatemsg', socket.username, 	privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
+	// });
 
-	socket.on('privateRoom', function(current ) {
-		var privateRom = [];
-		console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ current);
-		 for(var rooms in users[current].privaterooms) {
-		 	privateRom.push(rooms);
-		 }
-		socket.emit('privateRoomList', privateRom);
-	});
+	// socket.on('privateRoom', function(current ) {
+	// 	var privateRom = [];
+	// 	console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+ current);
+	// 	 for(var rooms in users[current].privaterooms) {
+	// 	 	privateRom.push(rooms);
+	// 	 }
+	// 	socket.emit('privateRoomList', privateRom);
+	// });
 
 	//When a user leaves a room this gets performed.
 	socket.on('partroom', function (room) {
@@ -461,6 +414,9 @@ function PriveateRoom() {
 
 	this.addPrivateMessage = function(message) {
 		(message !== undefined) ? this.privateMessageHistory.push(message) : console.log("ERROR: add message");
+	};
+	this.addUser = function(user) {
+		(user !== undefined) ? this.users[user] = user : console.log("ERROR: add user");
 	};
 
 }

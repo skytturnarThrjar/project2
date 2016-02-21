@@ -3,48 +3,36 @@ function ($scope, socket, $routeParams, $location) {
 
 $scope.message = "";
 $scope.currentUser = $routeParams.user;
-$scope.privatChatFriend = $routeParams.ChatFriend;
-$scope.isNewChat =  $routeParams.newChat;
+$scope.roomName = $routeParams.room;
+$scope.friendName = $routeParams.friend;
 
-/*if($scope.isNewChat === '0') // 1 is new
-{
-    socket.emit('joinPrivateRoom',  $scope.privatChatFriend);
-}*/
+//NEW BEGINING
+socket.emit('joinPrivateRoom', {'room': $scope.roomName});
 
-socket.emit('recv_privatemsg');
+//UPDATE CHAT
 
-socket.on('recv_privatemsg', function(current ,message) {
-  console.log("function recv_privatemsg:  " +  current);
-  if($scope.currentUser === current) {
-    $scope.currentUser = current;
+// socket.on('updatePrivateChat', function(room,chat) {
+//   if($scope.roomName == room) {
+//     $scope.messageHistory = chat;
+//     $scope.roomName = room;
+//   }
+// });
+
+
+socket.on('recv_privatemsg', function(room ,message) {
+  if($scope.currentUser + '-' + $scope.friendName === $routeParams.room) {
     $scope.messageHistory = message;
   }
 });
 
-
-  $scope.privatemsg = function() {
-
-      if( $routeParams.ChatFriend.includes('-')){
-        var array = $routeParams.ChatFriend.split('-');
-        if( array[0] === $scope.currentUser) {
-          $scope.friendName =  array[1];
-        } else {
-          $scope.friendName =  array[0];
-        }
-      }
-      else{
-        $scope.friendName = $scope.privatChatFriend;
-      }
-       socket.emit('privatemsg',{currentUser:$scope.currentUser , nick: $scope.friendName, message:$scope.message} , function (available) {
-        // $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
-
-         if (available) {
-
-          }
-          else {
-           $scope.errorMessage = "obbosí";
-         }
-       });
+  //SEND MESSAGE
+  //
+  // $scope.sendPrivatemsg = function() {
+  //      socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
+  // };
+  $scope.sendPrivatemsg = function() {
+    socket.emit('privatemsg',{ currentUser:$scope.currentUser , nick: $scope.friendName, roomName:$scope.roomName,  message:$scope.message});
   };
+
 
 }]);
