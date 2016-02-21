@@ -20,7 +20,7 @@ socket.emit('joinPrivateRoom', {'room': $scope.roomName});
 
 
 socket.on('recv_privatemsg', function(room ,message) {
-  if($scope.currentUser + '-' + $scope.friendName === $routeParams.room) {
+  if($scope.currentUser + '-' + $scope.friendName === $routeParams.room || $scope.friendName + '-' + $scope.currentUser === $routeParams.room ) {
     $scope.messageHistory = message;
   }
 });
