@@ -3,13 +3,12 @@
 <div class="row">
   <div class="col-xs-12">
     <ul class="list-group col-lg-5">
-    <li class="list-group-item" ng-repeat="message in messageHistory">
-      <!-- <div> Nick : {{nick}}  Message: {{message}}  Timestamp: {{timestamp}}</div> -->
-      <div class="chatNick"> {{message.nick}}</div>
-      <div class="chatTimestamp"> {{message.timestamp | date:'HH:mm dd/MM yyyy'}}</div>
-      <div> {{message.message}}</div>
-    </li>
-  </ul>
+      <li class="list-group-item" ng-repeat="message in messageHistory | reverse">
+        <div class="chatNick"> {{message.nick}}</div>
+        <div class="chatTimestamp"> {{message.timestamp | date:'HH:mm dd/MM yyyy'}}</div>
+        <div> {{message.message}}</div>
+      </li>
+    </ul>
   </div>
 </div>
 

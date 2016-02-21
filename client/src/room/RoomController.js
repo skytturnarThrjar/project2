@@ -152,11 +152,13 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   });
 
   //CLEAR INPUT FIELD
+
   $scope.clearfunction = function(){
     $scope.message = '';
   };
 
   //CHECK IF THERE IS A MESSAGE
+
   $scope.messageNotEmpty = function() {
     if($scope.message === '' || $scope.message === null) {
       return false;

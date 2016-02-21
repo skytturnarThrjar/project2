@@ -1,4 +1,3 @@
-// angular.module("chatApp").controller("RoomlistController", ["$scope".function($scope) {
 angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", "$routeParams", function ($scope, socket, $location, $routeParams) {
   $scope.errorMessage = '';
   $scope.roomName = '';
@@ -50,6 +49,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
     }
    };
 
+  //HVAÐ ER ÞETTA LAUFEY?
   // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
   socket.on('privateRoomList',function(list) {
     $scope.privateRoomList = list;

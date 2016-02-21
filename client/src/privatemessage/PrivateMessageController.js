@@ -1,52 +1,66 @@
 angular.module('chatApp').controller('PrivateMessageController', ['$scope', 'socket', '$routeParams', '$location',
 function ($scope, socket, $routeParams, $location) {
 
-  $scope.message = "";
+  $scope.message = '';
   $scope.currentUser = $routeParams.user;
   $scope.privatChatFriend = $routeParams.ChatFriend;
   $scope.isNewChat =  $routeParams.newChat;
 
-
-  socket.emit('joinPrivateRoom', $scope.privatChatFriend);
-
-  //LAGA - INCLUDEAR ALLTAF -
-  //Get the username of the friend
-
-  if($routeParams.ChatFriend.includes('-')) {
-    var array = $routeParams.ChatFriend.split('-');
-    if(array[0] === $scope.currentUser) {
-      $scope.friendName =  array[1];
-    }
-    else {
-      $scope.friendName =  array[0];
-    }
+  //ef það er eh ves her tok eg ut checkið með -
+  //GET USERNAME OF THE FRIEND
+  var array = $routeParams.ChatFriend.split('-');
+  if(array[0] === $scope.currentUser) {
+    $scope.friendName =  array[1];
   }
   else {
-    $scope.friendName = $scope.privatChatFriend;
+    $scope.friendName =  array[0];
   }
 
-  //socket.emit('recv_privatemsg');
+  //þarf þetta?
+  socket.emit('joinPrivateRoom', $scope.privatChatFriend);
+
+  //RECEIVE PRIVATE MESSAGE
+
   socket.on('recv_privatemsg', function(current, message) {
-    console.log("function recv_privatemsg:  " +  current);
     if($scope.currentUser === current) {
       $scope.currentUser = current;
       $scope.messageHistory = message;
     }
   });
 
+  //SEND PRIVATE MESSAGE
+
   $scope.privatemsg = function() {
     socket.emit('privatemsg',{currentUser:$scope.currentUser , nick: $scope.friendName, message:$scope.message} , function (available) {
-    // $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser +'-' +$scope.friendName+ '/0') ;
-      if (available) {}
+      if (available) {
+
+      }
       else {
-        $scope.errorMessage = "obbosí";
+        $scope.errorMessage = 'obbosí';
       }
     });
   };
 
+  //BACK BUTTON
+
+  $scope.goBack = function(){
+    $location.path('/roomlist/' + $scope.currentUser + '/');
+  };
+
+  //LOG OUT BUTTON
+
+  $scope.logout = function() {
+    socket.emit('disconnectPlease');
+    $location.path('/login');
+  };
+
+  //CLEAR INPUT FIELD
+
   $scope.clearfunction = function(){
     $scope.message = '';
   };
+
+  //CHECK IF MESSAGE IS EMPTY
 
   $scope.messageNotEmpty = function() {
     if($scope.message === '' || $scope.message === null) {
@@ -56,6 +70,4 @@ function ($scope, socket, $routeParams, $location) {
       return true;
     }
   };
-
-
 }]);

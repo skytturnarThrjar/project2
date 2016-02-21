@@ -1,7 +1,6 @@
 body {
   padding: 20px;
 }
-
 .wrapper {
   float: right;
 }
@@ -9,28 +8,22 @@ body {
   font-size: 14pt;
   font-weight: bold;
 }
-
 .chatTimestamp {
   font-size: 8pt;
 }
-
 .opsButtons {
   float: right;
 }
-
 .buttons {
   float: right;
 }
-
 .backButtons {
   display: inline-block;
 }
-
 .info {
   color: #a5aaa7;
 }
-
-.messageList {
-  height:420px;
-  overflow:scroll;
+#messageList {
+  height: 420px;
+  overflow: scroll;
 }
