@@ -40,19 +40,24 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	/*socket.on('roomOwner', function(nameObj) {
+	socket.on('roomOwner', function(nameObj) {
 		var roomName =  nameObj.curr + "-" + nameObj.other;
 	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
-		var bo = false;
-
-		if(users[nameObj.curr].privaterooms[roomName] !== undefined) {
+		var bo;
+		console.log("curr>  " +  nameObj.curr);
+		console.log("other> " + nameObj.other);
+		if(users[nameObj.curr].privaterooms[roomName] !== undefined ) {
+			console.log("if seting 11111111111111111111111111111111111111111111111111111");
 			bo = true;
 		} else if (users[nameObj.curr].privaterooms[roomName2] !== undefined) {
+			console.log("if setning 222222222222222222222222222222222222222222222222222222222222222");
 			bo = true;
+		} else {
+			bo = false;
 		}
 
 		io.sockets.emit('isOwner', bo);
-	});*/
+	});
 
 	socket.on('roomExists', function(nameObj) {
 

@@ -15,7 +15,7 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   };
 
   $scope.moveToRoom = function(name){
-    socket.emit('reasonroom', {'room': name}, function (available) {
+    socket.emit('joinroom', {'room': name}, function (available) {
       if (available) {
         $location.path('/room/' + $scope.currentUser + '/' + name);
       }
@@ -56,9 +56,8 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   $scope.moveToPrivateRoom = function(curr, item){
 
     var array = item.split('/');
-    socket.emit('roomOwner', {'curr': $scope.currentUser, 'other': array[0]});
-    socket.on('isOwner', function(bo){
-      if(bo) {
+
+
 
         if(curr === $scope.currentUser) {
           console.log("HELLL");
@@ -67,17 +66,22 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
 
           socket.emit('roomExists', {'curr': $scope.currentUser, 'other': array[0]});
           socket.on('getRoom', function(room){
+          roomArray = room.split('-');
+          if(curr == roomArray[0] || curr == roomArray[1])
+          {
+              if(room === "nothing") {
+                $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
 
-            if(room === "nothing") {
-              $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+              } else {
 
-            } else {
-              $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
-            }
+                $location.path('/private/' + $scope.currentUser + '/' + room + '/0') ;
+              }
+          }
           });
         }
-      }
-    });
+      //});
+      //}
+    //});
    };
 
   $scope.moveToExistingPrivateRoom = function(curr, item){
