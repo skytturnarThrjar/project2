@@ -1,18 +1,16 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "socket.io-client": "^0.9.16",
-    "gulp-jshint": "~1.4.0",
-    "jshint-stylish": "~0.1.5",
-    "connect": "~1.4.28"
+    "socket.io-client": "^0.9.16"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-connect": "^2.3.1",
     "gulp-concat": "^2.6.0",
     "gulp-jshint": "^2.0.0",
+    "jshint-stylish": "~0.1.5",
     "gulp-minify": "0.0.5",
     "gulp-ng-annotate": "^1.1.0",
     "gulp-uglify": "^1.5.2"
@@ -21,5 +19,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": ""
 }
