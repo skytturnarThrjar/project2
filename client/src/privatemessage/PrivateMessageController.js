@@ -3,21 +3,8 @@ function ($scope, socket, $routeParams, $location) {
 
   $scope.message = '';
   $scope.currentUser = $routeParams.user;
-  $scope.privatChatFriend = $routeParams.ChatFriend;
-  $scope.isNewChat =  $routeParams.newChat;
-
-  //ef það er eh ves her tok eg ut checkið með -
-  //GET USERNAME OF THE FRIEND
-  var array = $routeParams.ChatFriend.split('-');
-  if(array[0] === $scope.currentUser) {
-    $scope.friendName =  array[1];
-  }
-  else {
-    $scope.friendName =  array[0];
-  }
-
-  //þarf þetta?
-  socket.emit('joinPrivateRoom', $scope.privatChatFriend);
+  $scope.roomName = $routeParams.room;
+  $scope.friendName = $routeParams.friend;
 
   //RECEIVE PRIVATE MESSAGE
 
@@ -29,17 +16,9 @@ function ($scope, socket, $routeParams, $location) {
   });
 
   //SEND PRIVATE MESSAGE
-
   $scope.privatemsg = function() {
-    socket.emit('privatemsg',{currentUser:$scope.currentUser , nick: $scope.friendName, message:$scope.message} , function (available) {
-      if (available) {
-
-      }
-      else {
-        $scope.errorMessage = 'obbosí';
-      }
-    });
-  };
+  socket.emit('privatemsg',{ currentUser:$scope.currentUser , nick: $scope.friendName, roomName:$scope.roomName,  message:$scope.message});
+};
 
   //BACK BUTTON
 

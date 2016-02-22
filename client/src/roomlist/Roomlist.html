@@ -19,7 +19,7 @@
     <h2>Active users </h2>
     <ul class="list-group col-lg-3">
       <li class="list-group-item" ng-repeat="item in activeUsers" ng-if="item !== currentUser">
-        <a href ng-click="moveToPrivateRoom(currentUser, item)">{{item}}</a>
+        <a href ng-click="moveToPrivateRoom(currentUser,item)">{{item}}</a>
       </li>
     </ul>
   </div>

@@ -40,32 +40,16 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	//Á ÞETTA AÐ VERA???
-	socket.on('roomOwner', function(nameObj) {
-		var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
-		var bo;
-		if(users[nameObj.curr].privaterooms[roomName] !== undefined ) {
-			bo = true;
-		} else if (users[nameObj.curr].privaterooms[roomName2] !== undefined) {
-			bo = true;
-		} else {
-			bo = false;
-		}
-
-		io.sockets.emit('isOwner', bo);
-	});
-
 	socket.on('roomExists', function(nameObj) {
-	  var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+	  var roomName =  nameObj.curr + "-" + nameObj.friend;
+	  var roomName2 = nameObj.friend + "-"  + nameObj.curr;
 	  var room;
 
 		if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
 			privateChats[roomName] = new PriveateRoom();
 			//Keep track of the room in the user object.
 			users[nameObj.curr].privaterooms[roomName] = room;
-			users[nameObj.other].privaterooms[roomName] = room;
+			users[nameObj.friend].privaterooms[roomName] = room;
 		}
 	  //If the room does not exist
 	  if(privateChats[roomName2] !== undefined) {
@@ -74,7 +58,7 @@ io.sockets.on('connection', function (socket) {
 	    room = roomName;
 	  }
 	  else {
-	    room = "nothing";
+	    room = "NotExist"; // KIKJA
 	  }
 	  io.sockets.emit('getRoom', room);
 	});
@@ -172,53 +156,25 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('privatemsg', function (msgObj, fn) {
 		//If user exists in global user list.
-		if(msgObj.nick !== undefined) {
-			var messageObj = {
+		var messageObj = {
 				nick : msgObj.nick,
 				timestamp :  new Date(),
 				message : msgObj.message.substring(0, 200),
-				currentUser: msgObj.currentUser
+				currentUser: msgObj.currentUser,
+				roomName: msgObj.roomName
 			};
-			var room = messageObj.currentUser + "-" + messageObj.nick;
-			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
+			var room = msgObj.roomName;
 
-					//If the room does not exist
-			if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
-				privateChats[room] = new PriveateRoom();
-				//Keep track of the room in the user object.
-				users[messageObj.currentUser].privaterooms[room] = room;
-				users[messageObj.nick].privaterooms[room] = room;
-			}
-			else if(privateChats[room] !== undefined ) {
-			}
-			else if(privateChats[roomName2] !== undefined ) {
-				room = roomName2;
-			}
-
-			io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
-			io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
+			io.sockets.emit('privateRoom', messageObj.currentUser);//HELD ÞETTA MEGI FARA
+			io.sockets.emit('privateRoom', messageObj.nick);//HELD ÞETTA MEGI FARA
 			privateChats[room].addPrivateMessage(messageObj);
-			io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-			io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-
-			//Send the message only to this user.
-			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
-
-			//Callback recieves true.
-			fn(true);
-		}
-		fn(false);
+			io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory);
+			io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory);
 	});
 
 	socket.on('getPriHistory', function (nameObj) {
 		io.sockets.emit('recv_privatemsg', nameObj.currentUser, privateChats[nameObj.room].privateMessageHistory);
 		io.sockets.emit('recv_privatemsg', nameObj.nick, privateChats[nameObj.room].privateMessageHistory);
-	});
-
-	//er þetta eh notað??
-	socket.on('joinPrivateRoom', function (roomName)
-	{
-		io.sockets.emit('recv_privatemsg', socket.username, privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
 	});
 
 	socket.on('privateRoom', function(current ) {
@@ -227,7 +183,7 @@ io.sockets.on('connection', function (socket) {
 			privateRom.push(rooms);
 		}
 		socket.emit('privateRoomList', privateRom);
-	});
+	}); // HELD ÞETTA MEGI FARA
 
 	//When a user leaves a room this gets performed.
 	socket.on('partroom', function (room) {
