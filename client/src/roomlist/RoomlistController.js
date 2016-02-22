@@ -13,6 +13,13 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   });
   socket.emit('users');
 
+  //HVAÐ ER ÞETTA LAUFEY?
+  // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
+  socket.on('privateRoomList',function(list) {
+    $scope.privateRoomList = list;
+  });///er /etta ad gera eh ??? elin
+  socket.emit('privateRoom',$scope.currentUser);
+
   $scope.newRoom = function(){
     socket.emit('joinroom', {'room': $scope.roomName});
     $scope.moveToRoom($scope.roomName);
@@ -49,14 +56,8 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
     }
    };
 
-  //HVAÐ ER ÞETTA LAUFEY?
-  // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
-  socket.on('privateRoomList',function(list) {
-    $scope.privateRoomList = list;
-  });///er /etta ad gera eh ??? elin
-  socket.emit('privateRoom',$scope.currentUser);
-
   //CLEAR INPUT FIELD
+
   $scope.clearfunction = function() {
     $scope.message = '';
   };

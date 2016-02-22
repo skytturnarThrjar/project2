@@ -1,5 +1,6 @@
 body {
   padding: 20px;
+  background-color: #e6e6e6;
 }
 .wrapper {
   float: right;
@@ -23,7 +24,15 @@ body {
 .info {
   color: #a5aaa7;
 }
-#messageList {
+.messageList {
   height: 420px;
-  overflow: scroll;
+  overflow-x: scroll;
+  border: 4px;
+}
+.lists {
+  height: 450px;
+  overflow-x: scroll;
+}
+.roomlist {
+  height: 550px;
 }

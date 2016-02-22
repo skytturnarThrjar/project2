@@ -1,13 +1,12 @@
 angular.module('chatApp').controller('PrivateMessageController', ['$scope', 'socket', '$routeParams', '$location',
 function ($scope, socket, $routeParams, $location) {
-
   $scope.message = '';
   $scope.currentUser = $routeParams.user;
   $scope.privatChatFriend = $routeParams.ChatFriend;
   $scope.isNewChat =  $routeParams.newChat;
 
-  //ef það er eh ves her tok eg ut checkið með -
   //GET USERNAME OF THE FRIEND
+  
   var array = $routeParams.ChatFriend.split('-');
   if(array[0] === $scope.currentUser) {
     $scope.friendName =  array[1];

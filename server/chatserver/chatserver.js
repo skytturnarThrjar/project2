@@ -40,22 +40,6 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	//Á ÞETTA AÐ VERA???
-	socket.on('roomOwner', function(nameObj) {
-		var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
-		var bo;
-		if(users[nameObj.curr].privaterooms[roomName] !== undefined ) {
-			bo = true;
-		} else if (users[nameObj.curr].privaterooms[roomName2] !== undefined) {
-			bo = true;
-		} else {
-			bo = false;
-		}
-
-		io.sockets.emit('isOwner', bo);
-	});
-
 	socket.on('roomExists', function(nameObj) {
 	  var roomName =  nameObj.curr + "-" + nameObj.other;
 	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
@@ -180,7 +164,7 @@ io.sockets.on('connection', function (socket) {
 				currentUser: msgObj.currentUser
 			};
 			var room = messageObj.currentUser + "-" + messageObj.nick;
-			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser ;
+			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser;
 
 					//If the room does not exist
 			if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {

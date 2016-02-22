@@ -10,10 +10,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.showMessage = false;
   $scope.messageTimer = false;
 
-  //if currentUser er banned frá þessu herbergi þá má hann ekki
-  // if($scope.bannedUsers.indexOf($scope.currentUser) !== -1) {
-  //   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
-  // }
+  //SÆKJA CHATIÐ
   socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
 
   //CHECK UP ON THE SERVER MESSAGE
