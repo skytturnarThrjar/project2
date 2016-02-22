@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "main": "gulpfile.js",
+  "main": "app.js",
   "dependencies": {
     "socket.io-client": "^0.9.16"
   },

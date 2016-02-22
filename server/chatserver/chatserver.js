@@ -15,7 +15,7 @@ var privateChats = {};
 
 //Default room.
 rooms.lobby = new Room();
-rooms.lobby.setTopic("Welcome to the lobby!");
+rooms.lobby.setTopic('Welcome to the lobby!');
 
 io.sockets.on('connection', function (socket) {
 
@@ -23,7 +23,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('adduser', function(username, fn){
 
 		//Check if username is avaliable.
-		if (users[username] === undefined && username.toLowerCase != "server" && username.length < 21) {
+		if (users[username] === undefined && username.toLowerCase != 'server' && username.length < 21) {
 			socket.username = username;
 
 			//Store user object in global user roster.
@@ -41,24 +41,25 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('roomExists', function(nameObj) {
-	  var roomName =  nameObj.curr + "-" + nameObj.other;
-	  var roomName2 = nameObj.other + "-"  + nameObj.curr;
+	  var roomName = nameObj.curr + "-" + nameObj.other;
+	  var roomName2 = nameObj.other + "-" + nameObj.curr;
 	  var room;
 
-		if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
-			privateChats[roomName] = new PriveateRoom();
-			//Keep track of the room in the user object.
-			users[nameObj.curr].privaterooms[roomName] = room;
-			users[nameObj.other].privaterooms[roomName] = room;
-		}
+	  if(privateChats[roomName] === undefined && privateChats[roomName2] === undefined) {
+	    privateChats[roomName] = new PriveateRoom();
+	    //Keep track of the room in the user object.
+	    users[nameObj.curr].privaterooms[roomName] = room;
+	    users[nameObj.other].privaterooms[roomName] = room;
+	  }
 	  //If the room does not exist
 	  if(privateChats[roomName2] !== undefined) {
 	    room = roomName2;
-	  } else if(privateChats[roomName] !== undefined) {
+	  }
+		else if (privateChats[roomName] !== undefined) {
 	    room = roomName;
 	  }
-	  else {
-	    room = "nothing";
+		else {
+	    room = 'nothing';
 	  }
 	  io.sockets.emit('getRoom', room);
 	});
@@ -103,14 +104,14 @@ io.sockets.on('connection', function (socket) {
 			//If it doesnt match we set accepted to false.
 			if(pass != rooms[room].password) {
 				accepted = false;
-				reason = "wrong password";
+				reason = 'wrong password';
 			}
 		}
 
 		//Check if the user has been added to the ban list.
 		if(rooms[room].banned[socket.username] !== undefined) {
 			accepted = false;
-			reason = "banned";
+			reason = 'banned';
 		}
 		//If accepted is set to true at this point the user is allowed to join the room.
 		if(accepted) {
@@ -166,7 +167,7 @@ io.sockets.on('connection', function (socket) {
 			var room = messageObj.currentUser + "-" + messageObj.nick;
 			var roomName2 = messageObj.nick + "-"  + messageObj.currentUser;
 
-					//If the room does not exist
+			//If the room does not exist
 			if(privateChats[room] === undefined && privateChats[roomName2] === undefined) {
 				privateChats[room] = new PriveateRoom();
 				//Keep track of the room in the user object.
@@ -182,8 +183,8 @@ io.sockets.on('connection', function (socket) {
 			io.sockets.emit('privateRoom', messageObj.currentUser);// This line was added and needs to be fixed
 			io.sockets.emit('privateRoom', messageObj.nick);// This line was added and needs to be fixed
 			privateChats[room].addPrivateMessage(messageObj);
-			io.sockets.emit('recv_privatemsg', messageObj.currentUser, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
-			io.sockets.emit('recv_privatemsg', messageObj.nick, 	privateChats[room].privateMessageHistory); // MEESSSAGEEE
+			io.sockets.emit('recv_privatemsg', messageObj.currentUser, privateChats[room].privateMessageHistory); // MEESSSAGEEE
+			io.sockets.emit('recv_privatemsg', messageObj.nick, privateChats[room].privateMessageHistory); // MEESSSAGEEE
 
 			//Send the message only to this user.
 			// io.sockets.emit('recv_privatemsg', socket.username, users[socket.username].privateMessageHistory); // MEESSSAGEEE
@@ -199,9 +200,7 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit('recv_privatemsg', nameObj.nick, privateChats[nameObj.room].privateMessageHistory);
 	});
 
-	//er þetta eh notað??
-	socket.on('joinPrivateRoom', function (roomName)
-	{
+	socket.on('joinPrivateRoom', function (roomName) {
 		io.sockets.emit('recv_privatemsg', socket.username, privateChats[roomName].privateMessageHistory); // MEESSSAGEEE
 	});
 

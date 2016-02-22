@@ -1,4 +1,5 @@
-angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", "$routeParams", function ($scope, socket, $location, $routeParams) {
+angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", "$location", "$routeParams",
+function($scope, socket, $location, $routeParams) {
   $scope.errorMessage = '';
   $scope.roomName = '';
   $scope.currentUser = $routeParams.user;
@@ -13,21 +14,31 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   });
   socket.emit('users');
 
-  //HVAÐ ER ÞETTA LAUFEY?
-  // hér þurfum við að vera með eh check hvort það hafa eh bæst við held ég
-  socket.on('privateRoomList',function(list) {
+  socket.on('privateRoomList', function(list) {
     $scope.privateRoomList = list;
-  });///er /etta ad gera eh ??? elin
-  socket.emit('privateRoom',$scope.currentUser);
+  });
+  socket.emit('privateRoom', $scope.currentUser);
 
-  $scope.newRoom = function(){
+  //CREATE NEW ROOM
+
+  $scope.newRoom = function() {
     socket.emit('joinroom', {'room': $scope.roomName});
     $scope.moveToRoom($scope.roomName);
   };
 
-  $scope.moveToRoom = function(name){
-    socket.emit('joinroom', {'room': name}, function (available) {
-      if (available) {
+  //LOG OUT BUTTON
+
+  $scope.logout = function() {
+    socket.emit('disconnectPlease');
+    $location.path('/login');
+  };
+
+
+  //MOVE TO ROOM
+
+  $scope.moveToRoom = function(name) {
+    socket.emit('joinroom', {'room': name}, function(available) {
+      if(available) {
         $location.path('/room/' + $scope.currentUser + '/' + name);
       }
       else {
@@ -37,28 +48,40 @@ angular.module('chatApp').controller('RoomlistController', ["$scope", "socket", 
   };
 
   //MOVE TO PRIVATE ROOM
-  $scope.moveToPrivateRoom = function(curr, item){
+
+  $scope.moveToPrivateRoom = function(curr, item) {
     if(curr === $scope.currentUser) {
       socket.emit('roomExists', {'curr': $scope.currentUser, 'other': item});
-      socket.on('getRoom', function(room){
+      socket.on('getRoom', function(room) {
         roomArray = room.split('-');
         if(curr == roomArray[0] || curr == roomArray[1]) {
           if(room === "nothing") {
-            $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item) ;
+            $location.path('/private/' + $scope.currentUser + '/' + $scope.currentUser + '-' + item);
           }
           else {
-            $location.path('/private/' + $scope.currentUser + '/' + room) ;
+            $location.path('/private/' + $scope.currentUser + '/' + room);
             //kalla á history
-            socket.emit('getPriHistory', {'currentUser': $scope.currentUser, 'room': room, 'nick' : item});
+            socket.emit('getPriHistory', {'currentUser': $scope.currentUser, 'room': room, 'nick': item});
           }
         }
       });
     }
-   };
+  };
 
   //CLEAR INPUT FIELD
 
   $scope.clearfunction = function() {
     $scope.message = '';
+  };
+
+  //CHECK IF THERE IS A ROOMNAME
+
+  $scope.messageNotEmpty = function() {
+    if($scope.roomName === '' || $scope.roomName === null) {
+      return false;
+    }
+    else {
+      return true;
+    }
   };
 }]);

@@ -1,5 +1,5 @@
 angular.module('chatApp').controller('RoomController', ['$scope', 'socket', '$routeParams', '$location', '$timeout',
-function ($scope, socket, $routeParams, $location, $timeout) {
+function($scope, socket, $routeParams, $location, $timeout) {
   $scope.message = '';
   $scope.roomName = $routeParams.roomID;
   $scope.currentUser = $routeParams.user;
@@ -10,8 +10,9 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   $scope.showMessage = false;
   $scope.messageTimer = false;
 
-  //SÆKJA CHATIÐ
-  socket.emit('joinroom', {'room': $scope.roomName}, function (available) {});
+  //GET CHAT
+
+  socket.emit('joinroom', {'room': $scope.roomName}, function(available) {});
 
   //CHECK UP ON THE SERVER MESSAGE
 
@@ -28,7 +29,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
 
   //UPDATE CHAT
 
-  socket.on('updatechat', function(room,chat) {
+  socket.on('updatechat', function(room, chat) {
     if($scope.roomName == room) {
       $scope.messageHistory = chat;
       $scope.roomName = room;
@@ -39,24 +40,24 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   //TIMER ON MESSAGES
 
   $scope.messageOnTime = function() {
-    if ($scope.messageTimer) {
+    if($scope.messageTimer) {
       $timeout.cancel($scope.messageTimer);
     }
     $scope.showMessage = true;
-    $scope.messageTimer = $timeout(function () {
-        $scope.showMessage = false;
+    $scope.messageTimer = $timeout(function() {
+      $scope.showMessage = false;
     }, 2000);
   };
 
   //SEND MESSAGE
 
   $scope.sendmsg = function() {
-       socket.emit('sendmsg',{roomName: $scope.roomName, msg:$scope.message} );
+    socket.emit('sendmsg', {roomName: $scope.roomName, msg: $scope.message});
   };
 
   //BACK BUTTON
 
-  $scope.goBack = function(){
+  $scope.goBack = function() {
     socket.emit('partroom', $scope.roomName);
     $location.path('/roomlist/' + $scope.currentUser + '/');
   };
@@ -82,7 +83,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   // MAKE ANOTHER USER AN OP
 
   $scope.makeOp = function(username) {
-    socket.emit('op', {'user': username, 'room': $scope.roomName}, function (available) {
+    socket.emit('op', {'user': username, 'room': $scope.roomName}, function(available) {
       if (available) {
         $scope.infoMessage = 'You made ' + username + ' admin';
         $scope.messageOnTime();
@@ -97,8 +98,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   // KICKOUT
 
   $scope.kickOut = function(username) {
-    socket.emit('kick', {'user': username, 'room': $scope.roomName}, function (available) {
-      if (available) {
+    socket.emit('kick', {'user': username, 'room': $scope.roomName}, function(available) {
+      if(available) {
         $scope.infoMessage = 'You kicked ' + username + ' out of the room';
         $scope.messageOnTime();
       }
@@ -119,8 +120,8 @@ function ($scope, socket, $routeParams, $location, $timeout) {
   //BAN USER
 
   $scope.banUser = function(username) {
-    socket.emit('ban', {'user': username, 'room': $scope.roomName}, function (available) {
-      if (available) {
+    socket.emit('ban', {'user': username, 'room': $scope.roomName}, function(available) {
+      if(available) {
         $scope.infoMessage = 'You banned ' + username + ' from the room';
         $scope.messageOnTime();
       }
@@ -150,7 +151,7 @@ function ($scope, socket, $routeParams, $location, $timeout) {
 
   //CLEAR INPUT FIELD
 
-  $scope.clearfunction = function(){
+  $scope.clearfunction = function() {
     $scope.message = '';
   };
 
